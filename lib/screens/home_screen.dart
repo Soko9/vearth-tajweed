@@ -43,17 +43,36 @@ class _HomeScreenState extends State<HomeScreen> {
         body: DecoratedBox(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFFE7F8FA), Color(0xFFFDF4F0)],
+              colors: [Color(0xFFE2F2F6), Color(0xFFF9EEE8)],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
           ),
-          child: Column(
+          child: Stack(
             children: [
-              const SizedBox(height: 90),
-              _HeroHeader(attemptsCount: widget.attempts.length),
-              const SizedBox(height: 8),
-              Expanded(child: pages[_selectedIndex]),
+              Positioned(
+                right: -40,
+                top: 70,
+                child: _softBlob(color: const Color(0x5528A3B8), size: 170),
+              ),
+              Positioned(
+                left: -55,
+                top: 240,
+                child: _softBlob(color: const Color(0x55F39A7E), size: 190),
+              ),
+              Positioned(
+                right: -60,
+                bottom: 80,
+                child: _softBlob(color: const Color(0x554FC3A1), size: 180),
+              ),
+              Column(
+                children: [
+                  const SizedBox(height: 90),
+                  _HeroHeader(attemptsCount: widget.attempts.length),
+                  const SizedBox(height: 8),
+                  Expanded(child: pages[_selectedIndex]),
+                ],
+              ),
             ],
           ),
         ),
@@ -101,6 +120,22 @@ class _HomeScreenState extends State<HomeScreen> {
         return 'تجويد';
     }
   }
+
+  Widget _softBlob({required Color color, required double size}) {
+    return IgnorePointer(
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(color: color, blurRadius: 80, spreadRadius: 15),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _HeroHeader extends StatelessWidget {
@@ -117,7 +152,7 @@ class _HeroHeader extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(26),
         gradient: const LinearGradient(
-          colors: [AppTheme.primary, Color(0xFF36AFC4), AppTheme.accent],
+          colors: [Color(0xFF0F6272), Color(0xFF2297AD), Color(0xFF25997A)],
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
         ),
@@ -140,13 +175,13 @@ class _HeroHeader extends StatelessWidget {
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w800,
-                    fontSize: 20,
+                    fontSize: 23,
                   ),
                 ),
                 const SizedBox(height: 6),
                 const Text(
                   'اقرأ الحكم، تدرب، وتابع أدق نقاط القوة والضعف.',
-                  style: TextStyle(color: Color(0xFFEAF9FC), fontSize: 14),
+                  style: TextStyle(color: Color(0xFFF0FBFF), fontSize: 16),
                 ),
                 const SizedBox(height: 10),
                 Container(

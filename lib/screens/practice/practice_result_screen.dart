@@ -37,7 +37,7 @@ class PracticeResultScreen extends StatelessWidget {
                     '${attempt.correctCount} / ${attempt.questionCount}',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 38,
+                      fontSize: 42,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -45,7 +45,7 @@ class PracticeResultScreen extends StatelessWidget {
                     'نسبة النجاح ${attempt.score.toStringAsFixed(1)}%',
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 18,
+                      fontSize: 20,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -72,7 +72,7 @@ class PracticeResultScreen extends StatelessWidget {
             const SizedBox(height: 16),
             const Text(
               'الأخطاء التي تحتاج مراجعة',
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 22),
             ),
             const SizedBox(height: 8),
             if (wrongAnswers.isEmpty)

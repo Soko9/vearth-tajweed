@@ -85,7 +85,10 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
                     ),
                     child: Text(
                       _formatTime(_remainingSeconds!),
-                      style: const TextStyle(fontWeight: FontWeight.w800),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ),
@@ -124,7 +127,7 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
                 child: Text(
                   question.prompt,
                   style: const TextStyle(
-                    fontSize: 21,
+                    fontSize: 24,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -141,7 +144,7 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
                       margin: const EdgeInsets.only(bottom: 10),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? AppTheme.primary.withValues(alpha: 0.12)
+                            ? AppTheme.primary.withValues(alpha: 0.16)
                             : Colors.white,
                         borderRadius: BorderRadius.circular(18),
                         border: Border.all(
@@ -163,6 +166,7 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
                             fontWeight: isSelected
                                 ? FontWeight.w800
                                 : FontWeight.w600,
+                            fontSize: 18,
                           ),
                         ),
                         trailing: Icon(

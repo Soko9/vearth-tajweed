@@ -33,7 +33,7 @@ class AnalysisScreen extends StatelessWidget {
                 SizedBox(height: 10),
                 Text(
                   'لا توجد نتائج بعد',
-                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
+                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 22),
                 ),
                 SizedBox(height: 6),
                 Text(
@@ -81,7 +81,7 @@ class AnalysisScreen extends StatelessWidget {
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w800,
-                  fontSize: 22,
+                  fontSize: 24,
                 ),
               ),
               const SizedBox(height: 8),
@@ -120,7 +120,7 @@ class AnalysisScreen extends StatelessWidget {
             children: [
               const Text(
                 'آخر المحاولات',
-                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
               ),
               const SizedBox(height: 10),
               for (final attempt in attempts.take(8))
@@ -166,7 +166,7 @@ class AnalysisScreen extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+            style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
           ),
           const SizedBox(height: 8),
           if (data.isEmpty)
@@ -183,7 +183,10 @@ class AnalysisScreen extends StatelessWidget {
                         Expanded(
                           child: Text(
                             item.rule.name,
-                            style: const TextStyle(fontWeight: FontWeight.w700),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 17,
+                            ),
                           ),
                         ),
                         Text('${item.accuracy.toStringAsFixed(0)}%'),
@@ -243,7 +246,7 @@ class AnalysisScreen extends StatelessWidget {
   static const TextStyle _statStyle = TextStyle(
     color: Colors.white,
     fontWeight: FontWeight.w700,
-    fontSize: 15,
+    fontSize: 17,
   );
 }
 

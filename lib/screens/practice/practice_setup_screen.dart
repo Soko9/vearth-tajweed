@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../models/practice_models.dart';
 import '../../models/tajweed_models.dart';
-import '../../theme/app_theme.dart';
 import '../../services/practice_engine_service.dart';
+import '../../theme/app_theme.dart';
+import '../../widgets/fade_slide_in.dart';
 import 'practice_session_screen.dart';
 
 enum SessionLengthMode { questionCount, duration }
@@ -55,66 +56,84 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
     return ListView(
       padding: const EdgeInsets.fromLTRB(14, 0, 14, 18),
       children: [
-        _glassCard(context: context, child: _buildPracticeType()),
+        FadeSlideIn(
+          index: 0,
+          child: _glassCard(context: context, child: _buildPracticeType()),
+        ),
         const SizedBox(height: 12),
-        _glassCard(context: context, child: _buildLengthMode()),
+        FadeSlideIn(
+          index: 1,
+          child: _glassCard(context: context, child: _buildLengthMode()),
+        ),
         const SizedBox(height: 12),
-        _glassCard(context: context, child: _buildScope(availableRules)),
+        FadeSlideIn(
+          index: 2,
+          child: _glassCard(
+            context: context,
+            child: _buildScope(availableRules),
+          ),
+        ),
         const SizedBox(height: 12),
-        _glassCard(
-          context: context,
-          child: SwitchListTile.adaptive(
-            contentPadding: EdgeInsets.zero,
-            title: const Text(
-              'مصدر أسئلة متصل (اختياري)',
-              style: TextStyle(fontWeight: FontWeight.w700),
+        FadeSlideIn(
+          index: 3,
+          child: _glassCard(
+            context: context,
+            child: SwitchListTile.adaptive(
+              contentPadding: EdgeInsets.zero,
+              title: const Text(
+                'مصدر أسئلة متصل (اختياري)',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+              subtitle: const Text('إذا كان مغلقًا فكل التدريب يعمل أوفلاين.'),
+              value: _useOnlineSource,
+              onChanged: (value) {
+                setState(() {
+                  _useOnlineSource = value;
+                });
+              },
             ),
-            subtitle: const Text('إذا كان مغلقًا فكل التدريب يعمل أوفلاين.'),
-            value: _useOnlineSource,
-            onChanged: (value) {
-              setState(() {
-                _useOnlineSource = value;
-              });
-            },
           ),
         ),
         const SizedBox(height: 14),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            gradient: const LinearGradient(
-              colors: [AppTheme.primary, AppTheme.accent],
-              begin: Alignment.centerRight,
-              end: Alignment.centerLeft,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: AppTheme.primary.withValues(alpha: 0.25),
-                blurRadius: 14,
-                offset: const Offset(0, 8),
+        FadeSlideIn(
+          index: 4,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              gradient: const LinearGradient(
+                colors: [AppTheme.primary, AppTheme.accent],
+                begin: Alignment.centerRight,
+                end: Alignment.centerLeft,
               ),
-            ],
-          ),
-          child: FilledButton.icon(
-            onPressed: _isGenerating ? null : _startPractice,
-            icon: _isGenerating
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : const Icon(Icons.rocket_launch_rounded),
-            label: Text(
-              _isGenerating ? 'جاري تجهيز التدريب...' : 'ابدأ التدريب الآن',
-              style: const TextStyle(fontSize: 17),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primary.withValues(alpha: 0.25),
+                  blurRadius: 14,
+                  offset: const Offset(0, 8),
+                ),
+              ],
             ),
-            style: FilledButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-              minimumSize: const Size.fromHeight(56),
+            child: FilledButton.icon(
+              onPressed: _isGenerating ? null : _startPractice,
+              icon: _isGenerating
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.rocket_launch_rounded),
+              label: Text(
+                _isGenerating ? 'جاري تجهيز التدريب...' : 'ابدأ التدريب الآن',
+                style: const TextStyle(fontSize: 17),
+              ),
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                minimumSize: const Size.fromHeight(56),
+              ),
             ),
           ),
         ),
@@ -128,7 +147,7 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
       children: [
         const Text(
           '1) نوع التدريب',
-          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
         ),
         const SizedBox(height: 10),
         Wrap(
@@ -157,7 +176,7 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
       children: [
         const Text(
           '2) طول الجلسة',
-          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
         ),
         const SizedBox(height: 10),
         SegmentedButton<SessionLengthMode>(
@@ -186,7 +205,7 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
           _lengthMode == SessionLengthMode.questionCount
               ? 'عدد الأسئلة: $_questionCount'
               : 'مدة التدريب: $_durationMinutes دقائق',
-          style: const TextStyle(fontWeight: FontWeight.w700),
+          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
         ),
         Slider(
           value:
@@ -217,7 +236,7 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
       children: [
         const Text(
           '3) نطاق التدريب',
-          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
         ),
         const SizedBox(height: 10),
         Wrap(

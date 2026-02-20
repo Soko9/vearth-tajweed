@@ -45,7 +45,11 @@ class RuleDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     rule.description,
-                    style: const TextStyle(color: Colors.white, fontSize: 15),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),
@@ -125,7 +129,7 @@ class RuleDetailsScreen extends StatelessWidget {
                             example.text,
                             style: const TextStyle(
                               fontWeight: FontWeight.w800,
-                              fontSize: 17,
+                              fontSize: 19,
                             ),
                           ),
                           const SizedBox(height: 4),

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static const Color primary = Color(0xFF1F7A8C);
-  static const Color secondary = Color(0xFFFF8A65);
-  static const Color accent = Color(0xFF4FC3A1);
-  static const Color mist = Color(0xFFF2FAFB);
+  static const Color primary = Color(0xFF136A7A);
+  static const Color secondary = Color(0xFFF26F4F);
+  static const Color accent = Color(0xFF2FAE8A);
+  static const Color mist = Color(0xFFEEF6F9);
   static const Color card = Color(0xFFFFFFFF);
 
   static ThemeData get lightTheme {
@@ -19,14 +19,32 @@ class AppTheme {
     );
 
     final textTheme = GoogleFonts.beirutiTextTheme().copyWith(
-      headlineLarge: GoogleFonts.beiruti(fontWeight: FontWeight.w800),
-      headlineMedium: GoogleFonts.beiruti(fontWeight: FontWeight.w800),
-      headlineSmall: GoogleFonts.beiruti(fontWeight: FontWeight.w700),
-      titleLarge: GoogleFonts.beiruti(fontWeight: FontWeight.w700),
-      titleMedium: GoogleFonts.beiruti(fontWeight: FontWeight.w700),
-      bodyLarge: GoogleFonts.beiruti(height: 1.55),
-      bodyMedium: GoogleFonts.beiruti(height: 1.5),
-      labelLarge: GoogleFonts.beiruti(fontWeight: FontWeight.w700),
+      headlineLarge: GoogleFonts.beiruti(
+        fontWeight: FontWeight.w800,
+        fontSize: 32,
+      ),
+      headlineMedium: GoogleFonts.beiruti(
+        fontWeight: FontWeight.w800,
+        fontSize: 28,
+      ),
+      headlineSmall: GoogleFonts.beiruti(
+        fontWeight: FontWeight.w700,
+        fontSize: 24,
+      ),
+      titleLarge: GoogleFonts.beiruti(
+        fontWeight: FontWeight.w700,
+        fontSize: 23,
+      ),
+      titleMedium: GoogleFonts.beiruti(
+        fontWeight: FontWeight.w700,
+        fontSize: 20,
+      ),
+      bodyLarge: GoogleFonts.beiruti(height: 1.6, fontSize: 18),
+      bodyMedium: GoogleFonts.beiruti(height: 1.58, fontSize: 16),
+      labelLarge: GoogleFonts.beiruti(
+        fontWeight: FontWeight.w700,
+        fontSize: 16,
+      ),
     );
 
     return ThemeData(
@@ -41,6 +59,7 @@ class AppTheme {
         foregroundColor: colorScheme.primary,
         titleTextStyle: textTheme.titleLarge?.copyWith(
           color: colorScheme.primary,
+          fontSize: 24,
         ),
       ),
       cardTheme: CardThemeData(
@@ -71,6 +90,7 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
+        hintStyle: textTheme.bodyMedium?.copyWith(color: Colors.black54),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,

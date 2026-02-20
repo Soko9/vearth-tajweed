@@ -26,7 +26,7 @@ class SectionRulesScreen extends StatelessWidget {
               child: Text(
                 section.poemExcerpt,
                 style: const TextStyle(
-                  fontSize: 15,
+                  fontSize: 17,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -76,7 +76,7 @@ class SectionRulesScreen extends StatelessWidget {
                                   rule.name,
                                   style: const TextStyle(
                                     fontWeight: FontWeight.w800,
-                                    fontSize: 18,
+                                    fontSize: 20,
                                   ),
                                 ),
                               ),
@@ -86,7 +86,7 @@ class SectionRulesScreen extends StatelessWidget {
                           const SizedBox(height: 8),
                           Text(
                             rule.description,
-                            style: const TextStyle(fontSize: 14),
+                            style: const TextStyle(fontSize: 16),
                           ),
                           const SizedBox(height: 8),
                           Wrap(
