@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/practice_models.dart';
 import '../../models/tajweed_models.dart';
+import '../../theme/app_theme.dart';
 import '../../services/practice_engine_service.dart';
 import 'practice_session_screen.dart';
 
@@ -38,274 +39,279 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final selectedSection = widget.sections.where(
+    final selectedSection = widget.sections.firstWhere(
       (section) => section.id == _selectedSectionId,
+      orElse: () => widget.sections.first,
     );
 
-    final availableRules = _scope == PracticeScope.rule
-        ? (selectedSection.isEmpty ? _allRules : selectedSection.first.rules)
-        : _allRules;
+    final availableRules = selectedSection.rules;
+    final hasSelectedRule = availableRules.any(
+      (rule) => rule.id == _selectedRuleId,
+    );
+    if (!hasSelectedRule && _scope == PracticeScope.rule) {
+      _selectedRuleId = null;
+    }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
-      child: Column(
-        children: [
-          _buildTypeCard(context),
-          const SizedBox(height: 12),
-          _buildCountCard(context),
-          const SizedBox(height: 12),
-          _buildScopeCard(context, availableRules),
-          const SizedBox(height: 12),
-          _buildSourceCard(context),
-          const SizedBox(height: 16),
-          FilledButton.icon(
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(14, 0, 14, 18),
+      children: [
+        _glassCard(context: context, child: _buildPracticeType()),
+        const SizedBox(height: 12),
+        _glassCard(context: context, child: _buildLengthMode()),
+        const SizedBox(height: 12),
+        _glassCard(context: context, child: _buildScope(availableRules)),
+        const SizedBox(height: 12),
+        _glassCard(
+          context: context,
+          child: SwitchListTile.adaptive(
+            contentPadding: EdgeInsets.zero,
+            title: const Text(
+              'مصدر أسئلة متصل (اختياري)',
+              style: TextStyle(fontWeight: FontWeight.w700),
+            ),
+            subtitle: const Text('إذا كان مغلقًا فكل التدريب يعمل أوفلاين.'),
+            value: _useOnlineSource,
+            onChanged: (value) {
+              setState(() {
+                _useOnlineSource = value;
+              });
+            },
+          ),
+        ),
+        const SizedBox(height: 14),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            gradient: const LinearGradient(
+              colors: [AppTheme.primary, AppTheme.accent],
+              begin: Alignment.centerRight,
+              end: Alignment.centerLeft,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppTheme.primary.withValues(alpha: 0.25),
+                blurRadius: 14,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: FilledButton.icon(
             onPressed: _isGenerating ? null : _startPractice,
             icon: _isGenerating
                 ? const SizedBox(
                     width: 18,
                     height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.play_arrow_rounded),
-            label: Text(
-              _isGenerating ? 'جاري تجهيز الأسئلة...' : 'ابدأ التدريب',
-            ),
-            style: FilledButton.styleFrom(
-              minimumSize: const Size.fromHeight(54),
-              textStyle: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTypeCard(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '1) نوع التدريب',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 10),
-            DropdownButtonFormField<PracticeType>(
-              initialValue: _practiceType,
-              items: PracticeType.values
-                  .map(
-                    (type) => DropdownMenuItem<PracticeType>(
-                      value: type,
-                      child: Text(type.label),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
                     ),
                   )
-                  .toList(),
-              onChanged: (type) {
-                if (type == null) {
-                  return;
-                }
-                setState(() {
-                  _practiceType = type;
-                });
-              },
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'اختر نمط التدريب',
-              ),
+                : const Icon(Icons.rocket_launch_rounded),
+            label: Text(
+              _isGenerating ? 'جاري تجهيز التدريب...' : 'ابدأ التدريب الآن',
+              style: const TextStyle(fontSize: 17),
             ),
-          ],
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              shadowColor: Colors.transparent,
+              minimumSize: const Size.fromHeight(56),
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 
-  Widget _buildCountCard(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildPracticeType() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          '1) نوع التدريب',
+          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+        ),
+        const SizedBox(height: 10),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
           children: [
-            Text('2) طول الجلسة', style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              children: [
-                ChoiceChip(
-                  selected: _lengthMode == SessionLengthMode.questionCount,
-                  label: const Text('بعدد الأسئلة'),
-                  onSelected: (_) {
-                    setState(() {
-                      _lengthMode = SessionLengthMode.questionCount;
-                    });
-                  },
-                ),
-                ChoiceChip(
-                  selected: _lengthMode == SessionLengthMode.duration,
-                  label: const Text('بالمدة (دقائق)'),
-                  onSelected: (_) {
-                    setState(() {
-                      _lengthMode = SessionLengthMode.duration;
-                    });
-                  },
-                ),
-              ],
+            for (final type in PracticeType.values)
+              ChoiceChip(
+                selected: _practiceType == type,
+                label: Text(type.label),
+                onSelected: (_) {
+                  setState(() {
+                    _practiceType = type;
+                  });
+                },
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLengthMode() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          '2) طول الجلسة',
+          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+        ),
+        const SizedBox(height: 10),
+        SegmentedButton<SessionLengthMode>(
+          showSelectedIcon: false,
+          segments: const [
+            ButtonSegment(
+              value: SessionLengthMode.questionCount,
+              label: Text('بعدد الأسئلة'),
+              icon: Icon(Icons.format_list_numbered_rounded),
             ),
-            const SizedBox(height: 6),
-            Text(
-              _lengthMode == SessionLengthMode.questionCount
-                  ? 'عدد الأسئلة: $_questionCount'
-                  : 'المدة: $_durationMinutes دقائق',
+            ButtonSegment(
+              value: SessionLengthMode.duration,
+              label: Text('بالمدة'),
+              icon: Icon(Icons.timer_rounded),
             ),
-            Slider(
-              value: (_lengthMode == SessionLengthMode.questionCount
+          ],
+          selected: {_lengthMode},
+          onSelectionChanged: (values) {
+            setState(() {
+              _lengthMode = values.first;
+            });
+          },
+        ),
+        const SizedBox(height: 10),
+        Text(
+          _lengthMode == SessionLengthMode.questionCount
+              ? 'عدد الأسئلة: $_questionCount'
+              : 'مدة التدريب: $_durationMinutes دقائق',
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        ),
+        Slider(
+          value:
+              (_lengthMode == SessionLengthMode.questionCount
                       ? _questionCount
                       : _durationMinutes)
                   .toDouble(),
-              min: _lengthMode == SessionLengthMode.questionCount ? 5 : 2,
-              max: _lengthMode == SessionLengthMode.questionCount ? 30 : 20,
-              divisions:
-                  _lengthMode == SessionLengthMode.questionCount ? 25 : 18,
-              label: _lengthMode == SessionLengthMode.questionCount
-                  ? '$_questionCount'
-                  : '$_durationMinutes',
-              onChanged: (value) {
-                setState(() {
-                  if (_lengthMode == SessionLengthMode.questionCount) {
-                    _questionCount = value.round();
-                  } else {
-                    _durationMinutes = value.round();
-                  }
-                });
-              },
-            ),
-            if (_lengthMode == SessionLengthMode.duration)
-              Text(
-                'سيتم إنهاء التدريب تلقائيًا عند انتهاء الوقت.',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-          ],
+          min: _lengthMode == SessionLengthMode.questionCount ? 5 : 2,
+          max: _lengthMode == SessionLengthMode.questionCount ? 30 : 20,
+          divisions: _lengthMode == SessionLengthMode.questionCount ? 25 : 18,
+          onChanged: (value) {
+            setState(() {
+              if (_lengthMode == SessionLengthMode.questionCount) {
+                _questionCount = value.round();
+              } else {
+                _durationMinutes = value.round();
+              }
+            });
+          },
         ),
-      ),
+      ],
     );
   }
 
-  Widget _buildScopeCard(
-    BuildContext context,
-    List<TajweedRule> availableRules,
-  ) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildScope(List<TajweedRule> availableRules) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          '3) نطاق التدريب',
+          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+        ),
+        const SizedBox(height: 10),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
           children: [
-            Text(
-              '3) نطاق التدريب',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 10),
+            for (final scope in PracticeScope.values)
+              ChoiceChip(
+                selected: _scope == scope,
+                label: Text(scope.label),
+                onSelected: (_) {
+                  setState(() {
+                    _scope = scope;
+                    if (scope == PracticeScope.all) {
+                      _selectedSectionId = null;
+                      _selectedRuleId = null;
+                    } else {
+                      _selectedSectionId ??= widget.sections.first.id;
+                      if (scope == PracticeScope.section) {
+                        _selectedRuleId = null;
+                      }
+                    }
+                  });
+                },
+              ),
+          ],
+        ),
+        if (_scope != PracticeScope.all) ...[
+          const SizedBox(height: 12),
+          const Text('القسم', style: TextStyle(fontWeight: FontWeight.w700)),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final section in widget.sections)
+                ChoiceChip(
+                  selected: _selectedSectionId == section.id,
+                  label: Text(section.title),
+                  onSelected: (_) {
+                    setState(() {
+                      _selectedSectionId = section.id;
+                      _selectedRuleId = null;
+                    });
+                  },
+                ),
+            ],
+          ),
+        ],
+        if (_scope == PracticeScope.rule) ...[
+          const SizedBox(height: 12),
+          const Text('الحكم', style: TextStyle(fontWeight: FontWeight.w700)),
+          const SizedBox(height: 8),
+          if (availableRules.isEmpty)
+            const Text('لا توجد أحكام متاحة في هذا القسم.')
+          else
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: PracticeScope.values
-                  .map(
-                    (scope) => ChoiceChip(
-                      selected: _scope == scope,
-                      label: Text(scope.label),
-                      onSelected: (_) {
-                        setState(() {
-                          _scope = scope;
-                          if (scope == PracticeScope.all) {
-                            _selectedSectionId = null;
-                            _selectedRuleId = null;
-                          }
-                          if (scope == PracticeScope.section) {
-                            _selectedRuleId = null;
-                          }
-                        });
-                      },
+              children: [
+                for (final rule in availableRules)
+                  ChoiceChip(
+                    selected: _selectedRuleId == rule.id,
+                    label: Text(rule.name),
+                    avatar: CircleAvatar(
+                      radius: 5,
+                      backgroundColor: rule.color,
                     ),
-                  )
-                  .toList(),
+                    onSelected: (_) {
+                      setState(() {
+                        _selectedRuleId = rule.id;
+                      });
+                    },
+                  ),
+              ],
             ),
-            if (_scope != PracticeScope.all) ...[
-              const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                key: ValueKey(_selectedSectionId),
-                initialValue: _selectedSectionId,
-                hint: const Text('اختر القسم'),
-                items: widget.sections
-                    .map(
-                      (section) => DropdownMenuItem<String>(
-                        value: section.id,
-                        child: Text(section.title),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedSectionId = value;
-                    _selectedRuleId = null;
-                  });
-                },
-                decoration: const InputDecoration(border: OutlineInputBorder()),
-              ),
-            ],
-            if (_scope == PracticeScope.rule && _selectedSectionId != null) ...[
-              const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                key: ValueKey(_selectedRuleId),
-                initialValue: _selectedRuleId,
-                hint: const Text('اختر الحكم'),
-                items: availableRules
-                    .map(
-                      (rule) => DropdownMenuItem<String>(
-                        value: rule.id,
-                        child: Text(rule.name),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedRuleId = value;
-                  });
-                },
-                decoration: const InputDecoration(border: OutlineInputBorder()),
-              ),
-            ],
-          ],
-        ),
-      ),
+        ],
+      ],
     );
   }
 
-  Widget _buildSourceCard(BuildContext context) {
-    return Card(
-      child: SwitchListTile(
-        title: Text(
-          'مصدر التدريب المتصل',
-          style: Theme.of(context).textTheme.titleMedium,
+  Widget _glassCard({required BuildContext context, required Widget child}) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.9),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
         ),
-        subtitle: const Text('يمكنك إبقاؤه مطفأً للتدريب بالكامل دون إنترنت.'),
-        value: _useOnlineSource,
-        onChanged: (value) {
-          setState(() {
-            _useOnlineSource = value;
-          });
-        },
       ),
+      child: child,
     );
   }
-
-  List<TajweedRule> get _allRules => [
-    for (final section in widget.sections) ...section.rules,
-  ];
 
   Future<void> _startPractice() async {
     if (_scope == PracticeScope.section && _selectedSectionId == null) {
@@ -368,7 +374,7 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
     if (!mounted) {
       return;
     }
-    _showMessage('تم حفظ نتيجة التدريب بنجاح.');
+    _showMessage('تم حفظ النتيجة وتحديث التحليل.');
   }
 
   void _showMessage(String text) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/practice_models.dart';
 import '../models/tajweed_models.dart';
+import '../theme/app_theme.dart';
 
 class AnalysisScreen extends StatelessWidget {
   const AnalysisScreen({
@@ -16,16 +17,32 @@ class AnalysisScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (attempts.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.all(16),
-        child: Card(
-          child: Padding(
-            padding: EdgeInsets.all(18),
-            child: Text(
-              'لا توجد تدريبات محفوظة بعد. ابدأ أول تمرين ليظهر التحليل هنا.',
+      return ListView(
+        padding: const EdgeInsets.fromLTRB(14, 0, 14, 20),
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.insights_rounded, size: 36, color: AppTheme.primary),
+                SizedBox(height: 10),
+                Text(
+                  'لا توجد نتائج بعد',
+                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
+                ),
+                SizedBox(height: 6),
+                Text(
+                  'ابدأ تدريبًا واحدًا على الأقل وسيظهر التحليل التفصيلي هنا.',
+                ),
+              ],
             ),
           ),
-        ),
+        ],
       );
     }
 
@@ -37,75 +54,95 @@ class AnalysisScreen extends StatelessWidget {
 
     final totalSessions = attempts.length;
     final avgScore =
-        attempts
-            .map((attempt) => attempt.score)
-            .reduce((value, element) => value + element) /
+        attempts.map((attempt) => attempt.score).reduce((a, b) => a + b) /
         totalSessions;
     final totalQuestions = attempts
         .map((attempt) => attempt.questionCount)
-        .reduce((value, element) => value + element);
+        .reduce((a, b) => a + b);
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
+      padding: const EdgeInsets.fromLTRB(14, 0, 14, 20),
       children: [
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'ملخص الأداء',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 8),
-                Text('عدد الجلسات: $totalSessions'),
-                Text('إجمالي الأسئلة: $totalQuestions'),
-                Text('متوسط النتيجة: ${avgScore.toStringAsFixed(1)}%'),
-              ],
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFFA98B), Color(0xFFFFC982)],
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
             ),
           ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'ملخص الأداء',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 22,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text('عدد الجلسات: $totalSessions', style: _statStyle),
+              Text('إجمالي الأسئلة: $totalQuestions', style: _statStyle),
+              Text(
+                'متوسط النتيجة: ${avgScore.toStringAsFixed(1)}%',
+                style: _statStyle,
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 12),
         _ruleBlock(
-          context: context,
           title: 'أحكام تحتاج تدريبًا أكثر',
           data: weakRules.take(4).toList(),
-          emptyText: 'الأداء متوازن ولم يظهر ضعف واضح بعد.',
+          emptyText: 'الأداء متوازن الآن.',
+          color: AppTheme.secondary,
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 12),
         _ruleBlock(
-          context: context,
           title: 'أحكام قوية لديك',
           data: strongRules.take(4).toList(),
-          emptyText: 'أكمل تدريبات أكثر لإبراز نقاط القوة.',
+          emptyText: 'أكمل تدريبات أكثر لإظهار نقاط القوة.',
+          color: AppTheme.accent,
         ),
-        const SizedBox(height: 10),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'سجل المحاولات',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8),
-                for (final attempt in attempts.take(8))
-                  ListTile(
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.history_rounded),
-                    title: Text(
-                      '${attempt.practiceType.label} • ${attempt.score.toStringAsFixed(0)}%',
-                    ),
-                    subtitle: Text(
-                      '${_formatDate(attempt.createdAt)} • ${attempt.correctCount}/${attempt.questionCount}${attempt.durationMinutes != null ? ' • ${attempt.durationMinutes}د' : ''}',
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'آخر المحاولات',
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+              ),
+              const SizedBox(height: 10),
+              for (final attempt in attempts.take(8))
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  horizontalTitleGap: 10,
+                  leading: CircleAvatar(
+                    backgroundColor: AppTheme.primary.withValues(alpha: 0.13),
+                    child: const Icon(
+                      Icons.history_rounded,
+                      color: AppTheme.primary,
                     ),
                   ),
-              ],
-            ),
+                  title: Text(
+                    '${attempt.practiceType.label} • ${attempt.score.toStringAsFixed(0)}%',
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                  subtitle: Text(
+                    '${_formatDate(attempt.createdAt)} • ${attempt.correctCount}/${attempt.questionCount}${attempt.durationMinutes != null ? ' • ${attempt.durationMinutes}د' : ''}',
+                  ),
+                ),
+            ],
           ),
         ),
       ],
@@ -113,35 +150,28 @@ class AnalysisScreen extends StatelessWidget {
   }
 
   Widget _ruleBlock({
-    required BuildContext context,
     required String title,
     required List<_RuleStat> data,
     required String emptyText,
+    required Color color,
   }) {
-    if (data.isEmpty) {
-      return Card(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 8),
-              Text(emptyText),
-            ],
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
           ),
-        ),
-      );
-    }
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title, style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 10),
+          const SizedBox(height: 8),
+          if (data.isEmpty)
+            Text(emptyText)
+          else
             for (final item in data)
               Padding(
                 padding: const EdgeInsets.only(bottom: 10),
@@ -150,29 +180,34 @@ class AnalysisScreen extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Expanded(child: Text(item.rule.name)),
+                        Expanded(
+                          child: Text(
+                            item.rule.name,
+                            style: const TextStyle(fontWeight: FontWeight.w700),
+                          ),
+                        ),
                         Text('${item.accuracy.toStringAsFixed(0)}%'),
                       ],
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 6),
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(6),
+                      borderRadius: BorderRadius.circular(20),
                       child: LinearProgressIndicator(
                         value: item.accuracy / 100,
-                        minHeight: 8,
-                        color: item.rule.color,
+                        minHeight: 9,
+                        color: color,
+                        backgroundColor: color.withValues(alpha: 0.18),
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'الإجابات الصحيحة ${item.correct} من ${item.total}',
-                      style: Theme.of(context).textTheme.bodySmall,
+                      'صحيح ${item.correct} من ${item.total}',
+                      style: const TextStyle(color: Colors.black54),
                     ),
                   ],
                 ),
               ),
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -204,6 +239,12 @@ class AnalysisScreen extends StatelessWidget {
     final mm = value.minute.toString().padLeft(2, '0');
     return '${value.day}/${value.month}/${value.year} - $hh:$mm';
   }
+
+  static const TextStyle _statStyle = TextStyle(
+    color: Colors.white,
+    fontWeight: FontWeight.w700,
+    fontSize: 15,
+  );
 }
 
 class _RuleStat {

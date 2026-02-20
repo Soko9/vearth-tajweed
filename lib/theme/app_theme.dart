@@ -1,48 +1,104 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static const Color _primaryGreen = Color(0xFF0F5132);
-  static const Color _secondaryGold = Color(0xFFD4A017);
-  static const Color _sand = Color(0xFFF8F2E8);
+  static const Color primary = Color(0xFF1F7A8C);
+  static const Color secondary = Color(0xFFFF8A65);
+  static const Color accent = Color(0xFF4FC3A1);
+  static const Color mist = Color(0xFFF2FAFB);
+  static const Color card = Color(0xFFFFFFFF);
 
   static ThemeData get lightTheme {
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: _primaryGreen,
+      seedColor: primary,
       brightness: Brightness.light,
-      primary: _primaryGreen,
-      secondary: _secondaryGold,
-      surface: Colors.white,
+      primary: primary,
+      secondary: secondary,
+      tertiary: accent,
+      surface: card,
+    );
+
+    final textTheme = GoogleFonts.beirutiTextTheme().copyWith(
+      headlineLarge: GoogleFonts.beiruti(fontWeight: FontWeight.w800),
+      headlineMedium: GoogleFonts.beiruti(fontWeight: FontWeight.w800),
+      headlineSmall: GoogleFonts.beiruti(fontWeight: FontWeight.w700),
+      titleLarge: GoogleFonts.beiruti(fontWeight: FontWeight.w700),
+      titleMedium: GoogleFonts.beiruti(fontWeight: FontWeight.w700),
+      bodyLarge: GoogleFonts.beiruti(height: 1.55),
+      bodyMedium: GoogleFonts.beiruti(height: 1.5),
+      labelLarge: GoogleFonts.beiruti(fontWeight: FontWeight.w700),
     );
 
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: _sand,
-      appBarTheme: const AppBarTheme(
+      scaffoldBackgroundColor: mist,
+      textTheme: textTheme,
+      appBarTheme: AppBarTheme(
         centerTitle: true,
-        foregroundColor: Colors.white,
-        backgroundColor: _primaryGreen,
+        backgroundColor: Colors.transparent,
         elevation: 0,
+        foregroundColor: colorScheme.primary,
+        titleTextStyle: textTheme.titleLarge?.copyWith(
+          color: colorScheme.primary,
+        ),
       ),
       cardTheme: CardThemeData(
-        color: Colors.white,
+        color: card,
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: colorScheme.primary,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: colorScheme.primary,
+          side: BorderSide(color: colorScheme.primary.withValues(alpha: 0.35)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(
+            color: colorScheme.primary.withValues(alpha: 0.1),
+          ),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
       ),
       chipTheme: ChipThemeData(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         side: BorderSide.none,
-        labelStyle: const TextStyle(fontWeight: FontWeight.w600),
-        backgroundColor: colorScheme.secondaryContainer,
-        selectedColor: colorScheme.primaryContainer,
+        labelStyle: textTheme.labelLarge,
+        backgroundColor: colorScheme.primaryContainer.withValues(alpha: 0.5),
+        selectedColor: colorScheme.secondaryContainer.withValues(alpha: 0.7),
       ),
-      textTheme: const TextTheme(
-        headlineMedium: TextStyle(fontWeight: FontWeight.w800),
-        headlineSmall: TextStyle(fontWeight: FontWeight.w700),
-        titleLarge: TextStyle(fontWeight: FontWeight.w700),
-        titleMedium: TextStyle(fontWeight: FontWeight.w700),
-        bodyLarge: TextStyle(height: 1.6),
-        bodyMedium: TextStyle(height: 1.55),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: Colors.white,
+        indicatorColor: colorScheme.primaryContainer.withValues(alpha: 0.7),
+        labelTextStyle: WidgetStatePropertyAll(
+          textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w700),
+        ),
       ),
     );
   }

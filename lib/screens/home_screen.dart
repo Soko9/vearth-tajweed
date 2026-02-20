@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/tajweed_content.dart';
 import '../models/practice_models.dart';
+import '../theme/app_theme.dart';
 import 'analysis_screen.dart';
 import 'lessons_screen.dart';
 import 'practice/practice_setup_screen.dart';
@@ -37,34 +38,52 @@ class _HomeScreenState extends State<HomeScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
+        extendBodyBehindAppBar: true,
         appBar: AppBar(title: Text(_titleForIndex(_selectedIndex))),
-        body: Column(
-          children: [
-            const _HeroHeader(),
-            Expanded(child: pages[_selectedIndex]),
-          ],
+        body: DecoratedBox(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFFE7F8FA), Color(0xFFFDF4F0)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: Column(
+            children: [
+              const SizedBox(height: 90),
+              _HeroHeader(attemptsCount: widget.attempts.length),
+              const SizedBox(height: 8),
+              Expanded(child: pages[_selectedIndex]),
+            ],
+          ),
         ),
-        bottomNavigationBar: NavigationBar(
-          selectedIndex: _selectedIndex,
-          onDestinationSelected: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.menu_book_rounded),
-              label: 'الدروس',
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: NavigationBar(
+              selectedIndex: _selectedIndex,
+              onDestinationSelected: (index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
+              destinations: const [
+                NavigationDestination(
+                  icon: Icon(Icons.auto_stories_rounded),
+                  label: 'الدروس',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.workspace_premium_rounded),
+                  label: 'التدريب',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.insights_rounded),
+                  label: 'التحليل',
+                ),
+              ],
             ),
-            NavigationDestination(
-              icon: Icon(Icons.quiz_rounded),
-              label: 'التدريب',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.analytics_rounded),
-              label: 'التحليل',
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -73,11 +92,11 @@ class _HomeScreenState extends State<HomeScreen> {
   String _titleForIndex(int index) {
     switch (index) {
       case 0:
-        return 'تحفة الأطفال - الأحكام';
+        return 'تحفة الأطفال';
       case 1:
-        return 'منطقة التدريب';
+        return 'تدريب ذكي';
       case 2:
-        return 'المتابعة والتحليل';
+        return 'لوحة التقدّم';
       default:
         return 'تجويد';
     }
@@ -85,37 +104,84 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _HeroHeader extends StatelessWidget {
-  const _HeroHeader();
+  const _HeroHeader({required this.attemptsCount});
+
+  final int attemptsCount;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.all(12),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: 14),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(26),
         gradient: const LinearGradient(
-          colors: [Color(0xFF0F5132), Color(0xFF1E7A4D)],
+          colors: [AppTheme.primary, Color(0xFF36AFC4), AppTheme.accent],
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primary.withValues(alpha: 0.25),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
-      child: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Text(
-            'رحلة مبسطة في أحكام التجويد',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
-              fontSize: 18,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'تجويد بلغة سهلة وتصميم حديث',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 20,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  'اقرأ الحكم، تدرب، وتابع أدق نقاط القوة والضعف.',
+                  style: TextStyle(color: Color(0xFFEAF9FC), fontSize: 14),
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Text(
+                    'عدد التدريبات: $attemptsCount',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          SizedBox(height: 8),
-          Text(
-            'تعلم القاعدة، شاهد أمثلة، ثم اختبر نفسك وتابع تقدّمك.',
-            style: TextStyle(color: Color(0xFFEAF7F0), fontSize: 14),
+          const SizedBox(width: 10),
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.22),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.auto_awesome_rounded,
+              color: Colors.white,
+              size: 28,
+            ),
           ),
         ],
       ),

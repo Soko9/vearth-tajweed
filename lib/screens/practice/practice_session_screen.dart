@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../models/practice_models.dart';
+import '../../theme/app_theme.dart';
 import 'practice_result_screen.dart';
 
 class PracticeSessionScreen extends StatefulWidget {
@@ -65,16 +66,26 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('سؤال ${_currentIndex + 1} من ${widget.questions.length}'),
+          title: Text(
+            'التدريب • ${_currentIndex + 1}/${widget.questions.length}',
+          ),
           actions: [
             if (_remainingSeconds != null)
               Padding(
-                padding: const EdgeInsetsDirectional.only(end: 12),
+                padding: const EdgeInsetsDirectional.only(end: 14),
                 child: Center(
-                  child: Text(
-                    'الوقت ${_formatTime(_remainingSeconds!)}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      _formatTime(_remainingSeconds!),
+                      style: const TextStyle(fontWeight: FontWeight.w800),
                     ),
                   ),
                 ),
@@ -82,47 +93,83 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
           ],
         ),
         body: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(14, 8, 14, 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              LinearProgressIndicator(value: progress),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(30),
+                child: LinearProgressIndicator(
+                  value: progress,
+                  minHeight: 10,
+                  color: AppTheme.primary,
+                  backgroundColor: AppTheme.primary.withValues(alpha: 0.16),
+                ),
+              ),
               const SizedBox(height: 14),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(
-                    question.prompt,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFFFFFF), Color(0xFFF5FEFF)],
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                  ),
+                  border: Border.all(
+                    color: AppTheme.primary.withValues(alpha: 0.12),
+                  ),
+                ),
+                child: Text(
+                  question.prompt,
+                  style: const TextStyle(
+                    fontSize: 21,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
               Expanded(
                 child: ListView.builder(
                   itemCount: question.options.length,
                   itemBuilder: (context, optionIndex) {
                     final isSelected =
                         _selectedOptions[_currentIndex] == optionIndex;
-                    return Card(
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
                       margin: const EdgeInsets.only(bottom: 10),
-                      color: isSelected
-                          ? Theme.of(context).colorScheme.secondaryContainer
-                          : null,
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? AppTheme.primary.withValues(alpha: 0.12)
+                            : Colors.white,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(
+                          color: isSelected
+                              ? AppTheme.primary
+                              : AppTheme.primary.withValues(alpha: 0.12),
+                          width: isSelected ? 1.5 : 1,
+                        ),
+                      ),
                       child: ListTile(
                         onTap: () {
                           setState(() {
                             _selectedOptions[_currentIndex] = optionIndex;
                           });
                         },
-                        title: Text(question.options[optionIndex]),
+                        title: Text(
+                          question.options[optionIndex],
+                          style: TextStyle(
+                            fontWeight: isSelected
+                                ? FontWeight.w800
+                                : FontWeight.w600,
+                          ),
+                        ),
                         trailing: Icon(
                           isSelected
                               ? Icons.check_circle_rounded
                               : Icons.circle_outlined,
+                          color: isSelected ? AppTheme.primary : Colors.grey,
                         ),
                       ),
                     );
@@ -143,10 +190,10 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
                     onPressed: _isLastQuestion ? _submit : _goToNext,
                     icon: Icon(
                       _isLastQuestion
-                          ? Icons.check_circle_outline_rounded
+                          ? Icons.flag_circle_rounded
                           : Icons.arrow_back_rounded,
                     ),
-                    label: Text(_isLastQuestion ? 'إنهاء التدريب' : 'التالي'),
+                    label: Text(_isLastQuestion ? 'إنهاء' : 'التالي'),
                   ),
                 ],
               ),
@@ -178,7 +225,7 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
     });
   }
 
-  void _submit({bool force = false}) {
+  Future<void> _submit({bool force = false}) async {
     if (_isSubmitting) {
       return;
     }
@@ -224,11 +271,16 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
       durationMinutes: widget.config.durationMinutes,
     );
 
-    Navigator.of(context).pushReplacement<PracticeAttempt, PracticeAttempt>(
+    final result = await Navigator.of(context).push<PracticeAttempt>(
       MaterialPageRoute<PracticeAttempt>(
         builder: (_) => PracticeResultScreen(attempt: attempt),
       ),
     );
+
+    if (!mounted) {
+      return;
+    }
+    Navigator.of(context).pop(result ?? attempt);
   }
 
   void _showMessage(String text) {
