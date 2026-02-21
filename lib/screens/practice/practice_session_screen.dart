@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:characters/characters.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/practice_models.dart';
@@ -25,6 +26,7 @@ class PracticeSessionScreen extends StatefulWidget {
 class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
   int _currentIndex = 0;
   late final List<int?> _selectedOptions;
+  late final List<String?> _selectedLetters;
   Timer? _timer;
   int? _remainingSeconds;
   bool _isSubmitting = false;
@@ -33,6 +35,7 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
   void initState() {
     super.initState();
     _selectedOptions = List<int?>.filled(widget.questions.length, null);
+    _selectedLetters = List<String?>.filled(widget.questions.length, null);
     if (widget.config.durationMinutes != null) {
       _remainingSeconds = widget.config.durationMinutes! * 60;
       _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -136,51 +139,9 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
               ),
               const SizedBox(height: 12),
               Expanded(
-                child: ListView.builder(
-                  itemCount: question.options.length,
-                  itemBuilder: (context, optionIndex) {
-                    final isSelected =
-                        _selectedOptions[_currentIndex] == optionIndex;
-                    return AnimatedContainer(
-                      duration: const Duration(milliseconds: 180),
-                      margin: const EdgeInsets.only(bottom: 10),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? AppTheme.primary.withValues(alpha: 0.16)
-                            : Colors.white,
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(
-                          color: isSelected
-                              ? AppTheme.primary
-                              : AppTheme.primary.withValues(alpha: 0.12),
-                          width: isSelected ? 1.5 : 1,
-                        ),
-                      ),
-                      child: ListTile(
-                        onTap: () {
-                          setState(() {
-                            _selectedOptions[_currentIndex] = optionIndex;
-                          });
-                        },
-                        title: Text(
-                          question.options[optionIndex],
-                          style: TextStyle(
-                            fontWeight: isSelected
-                                ? FontWeight.w800
-                                : FontWeight.w600,
-                            fontSize: 18,
-                          ),
-                        ),
-                        trailing: Icon(
-                          isSelected
-                              ? Icons.check_circle_rounded
-                              : Icons.circle_outlined,
-                          color: isSelected ? AppTheme.primary : Colors.grey,
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                child: question.isLetterTapQuestion
+                    ? _buildLetterTapQuestion(question)
+                    : _buildOptionsQuestion(question),
               ),
               const SizedBox(height: 8),
               Row(
@@ -213,8 +174,13 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
   bool get _isLastQuestion => _currentIndex == widget.questions.length - 1;
 
   void _goToNext() {
-    if (_selectedOptions[_currentIndex] == null) {
-      _showMessage('اختر إجابة أولًا.');
+    if (!_hasAnswerAt(_currentIndex)) {
+      final question = widget.questions[_currentIndex];
+      _showMessage(
+        question.isLetterTapQuestion
+            ? 'اختر حرفًا أولًا.'
+            : 'اختر إجابة أولًا.',
+      );
       return;
     }
 
@@ -235,8 +201,13 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
     if (_isSubmitting) {
       return;
     }
-    if (!force && _selectedOptions[_currentIndex] == null) {
-      _showMessage('اختر إجابة السؤال الأخير أولًا.');
+    if (!force && !_hasAnswerAt(_currentIndex)) {
+      final question = widget.questions[_currentIndex];
+      _showMessage(
+        question.isLetterTapQuestion
+            ? 'اختر حرفًا في السؤال الأخير أولًا.'
+            : 'اختر إجابة السؤال الأخير أولًا.',
+      );
       return;
     }
     _isSubmitting = true;
@@ -248,19 +219,27 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
     for (var i = 0; i < widget.questions.length; i++) {
       final question = widget.questions[i];
       final selectedIndex = _selectedOptions[i];
-      final isCorrect = selectedIndex == question.correctOptionIndex;
+      final selectedLetter = _selectedLetters[i];
+      final isCorrect = question.isLetterTapQuestion
+          ? _isLetterCorrect(selectedLetter, question.validLetters)
+          : _isOptionCorrect(question, selectedIndex);
       if (isCorrect) {
         correctCount++;
       }
+
+      final chosenAnswer = question.isLetterTapQuestion
+          ? (selectedLetter ?? 'بدون إجابة')
+          : _selectedOptionText(question, selectedIndex);
+      final correctAnswer = question.isLetterTapQuestion
+          ? question.validLetters.join('، ')
+          : _correctOptionText(question);
 
       answers.add(
         PracticeAnswer(
           ruleId: question.ruleId,
           questionPrompt: question.prompt,
-          chosenAnswer: selectedIndex == null
-              ? 'بدون إجابة'
-              : question.options[selectedIndex],
-          correctAnswer: question.options[question.correctOptionIndex],
+          chosenAnswer: chosenAnswer,
+          correctAnswer: correctAnswer,
           isCorrect: isCorrect,
           explanation: question.explanation,
         ),
@@ -297,5 +276,215 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
     final minutes = (totalSeconds ~/ 60).toString().padLeft(2, '0');
     final seconds = (totalSeconds % 60).toString().padLeft(2, '0');
     return toArabicDigits('$minutes:$seconds');
+  }
+
+  Widget _buildOptionsQuestion(PracticeQuestion question) {
+    return ListView.builder(
+      itemCount: question.options.length,
+      itemBuilder: (context, optionIndex) {
+        final isSelected = _selectedOptions[_currentIndex] == optionIndex;
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          margin: const EdgeInsets.only(bottom: 10),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? AppTheme.primary.withValues(alpha: 0.16)
+                : Colors.white,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: isSelected
+                  ? AppTheme.primary
+                  : AppTheme.primary.withValues(alpha: 0.12),
+              width: isSelected ? 1.5 : 1,
+            ),
+          ),
+          child: ListTile(
+            onTap: () {
+              setState(() {
+                _selectedOptions[_currentIndex] = optionIndex;
+              });
+            },
+            title: Text(
+              question.options[optionIndex],
+              style: TextStyle(
+                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                fontSize: 18,
+              ),
+            ),
+            trailing: Icon(
+              isSelected ? Icons.check_circle_rounded : Icons.circle_outlined,
+              color: isSelected ? AppTheme.primary : Colors.grey,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLetterTapQuestion(PracticeQuestion question) {
+    final selectedLetter = _selectedLetters[_currentIndex];
+    final isCorrect = selectedLetter == null
+        ? null
+        : _isLetterCorrect(selectedLetter, question.validLetters);
+    final sourceChars = question.sourceText!.characters.toList();
+
+    return ListView(
+      children: [
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: AppTheme.primary.withValues(alpha: 0.12)),
+          ),
+          child: Wrap(
+            spacing: 1,
+            runSpacing: 6,
+            children: [
+              for (final grapheme in sourceChars)
+                _buildTappableLetter(
+                  grapheme: grapheme,
+                  selectedLetter: selectedLetter,
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        if (selectedLetter == null)
+          const Text(
+            'اضغط على أي حرف من النص.',
+            style: TextStyle(color: Color(0xFF50636B), fontSize: 16),
+          )
+        else
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: (isCorrect ?? false)
+                  ? Colors.green.withValues(alpha: 0.08)
+                  : Colors.red.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: (isCorrect ?? false)
+                    ? Colors.green.withValues(alpha: 0.35)
+                    : Colors.red.withValues(alpha: 0.35),
+              ),
+            ),
+            child: Text(
+              (isCorrect ?? false)
+                  ? 'إجابة صحيحة.'
+                  : 'غير صحيح. اختر حرفًا آخر أو أكمل.',
+              style: TextStyle(
+                color: (isCorrect ?? false)
+                    ? const Color(0xFF196D2E)
+                    : const Color(0xFF9A1C1C),
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildTappableLetter({
+    required String grapheme,
+    required String? selectedLetter,
+  }) {
+    final normalizedLetter = _normalizeArabicLetter(grapheme);
+    final isTappable = normalizedLetter.isNotEmpty;
+    final isSelected = isTappable && selectedLetter == normalizedLetter;
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(8),
+      onTap: !isTappable
+          ? null
+          : () {
+              setState(() {
+                _selectedLetters[_currentIndex] = normalizedLetter;
+              });
+            },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 140),
+        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppTheme.primary.withValues(alpha: 0.18)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          grapheme,
+          style: TextStyle(
+            fontSize: 34,
+            fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
+            color: isSelected ? AppTheme.primary : const Color(0xFF102126),
+          ),
+        ),
+      ),
+    );
+  }
+
+  bool _hasAnswerAt(int index) {
+    final question = widget.questions[index];
+    if (question.isLetterTapQuestion) {
+      return _selectedLetters[index] != null;
+    }
+    return _selectedOptions[index] != null;
+  }
+
+  bool _isOptionCorrect(PracticeQuestion question, int? selectedIndex) {
+    final correctIndex = question.correctOptionIndex;
+    if (selectedIndex == null || correctIndex == null) {
+      return false;
+    }
+    if (correctIndex < 0 || correctIndex >= question.options.length) {
+      return false;
+    }
+    return selectedIndex == correctIndex;
+  }
+
+  String _selectedOptionText(PracticeQuestion question, int? selectedIndex) {
+    if (selectedIndex == null) {
+      return 'بدون إجابة';
+    }
+    if (selectedIndex < 0 || selectedIndex >= question.options.length) {
+      return 'بدون إجابة';
+    }
+    return question.options[selectedIndex];
+  }
+
+  String _correctOptionText(PracticeQuestion question) {
+    final correctIndex = question.correctOptionIndex;
+    if (correctIndex == null) {
+      return '';
+    }
+    if (correctIndex < 0 || correctIndex >= question.options.length) {
+      return '';
+    }
+    return question.options[correctIndex];
+  }
+
+  bool _isLetterCorrect(String? selectedLetter, List<String> validLetters) {
+    if (selectedLetter == null) {
+      return false;
+    }
+    final normalizedSelected = _normalizeArabicLetter(selectedLetter);
+    if (normalizedSelected.isEmpty) {
+      return false;
+    }
+    final normalizedValid = validLetters
+        .map(_normalizeArabicLetter)
+        .where((item) => item.isNotEmpty)
+        .toSet();
+    return normalizedValid.contains(normalizedSelected);
+  }
+
+  String _normalizeArabicLetter(String input) {
+    final withoutMarks = input.replaceAll(
+      RegExp(r'[\u064B-\u065F\u0670\u06D6-\u06ED]'),
+      '',
+    );
+    final match = RegExp(r'[ء-ي]').firstMatch(withoutMarks);
+    return match?.group(0) ?? '';
   }
 }

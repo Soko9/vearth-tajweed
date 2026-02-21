@@ -27,9 +27,10 @@ class PracticeEngineService {
   Future<List<PracticeQuestion>> generateQuestions({
     required PracticeConfig config,
     required List<TajweedSection> sections,
-  }) async =>
-      (await generateQuestionBatch(config: config, sections: sections))
-          .questions;
+  }) async => (await generateQuestionBatch(
+    config: config,
+    sections: sections,
+  )).questions;
 
   Future<GeneratedPracticeQuestions> generateQuestionBatch({
     required PracticeConfig config,
@@ -58,33 +59,30 @@ class PracticeEngineService {
 
     final sectionMap = {for (final section in sections) section.id: section};
     final allRules = [for (final section in sections) ...section.rules];
-    final generatedOffline = List<PracticeQuestion>.generate(config.questionCount, (
-      index,
-    ) {
-      final rule = scopedRules[_random.nextInt(scopedRules.length)];
-      final id =
-          '${config.practiceType.name}_${index}_${rule.id}_${DateTime.now().microsecondsSinceEpoch}';
+    final generatedOffline = List<PracticeQuestion>.generate(
+      config.questionCount,
+      (index) {
+        final rule = scopedRules[_random.nextInt(scopedRules.length)];
+        final id =
+            '${config.practiceType.name}_${index}_${rule.id}_${DateTime.now().microsecondsSinceEpoch}';
 
-      switch (config.practiceType) {
-        case PracticeType.mcq:
-          return _buildMcqQuestion(id: id, rule: rule, rulesPool: allRules);
-        case PracticeType.trueFalse:
-          return _buildTrueFalseQuestion(id: id, rule: rule);
-        case PracticeType.letterMatch:
-          return _buildLetterMatchQuestion(
-            id: id,
-            rule: rule,
-            rulesPool: allRules,
-          );
-        case PracticeType.sectionMatch:
-          return _buildSectionMatchQuestion(
-            id: id,
-            rule: rule,
-            sections: sections,
-            sectionMap: sectionMap,
-          );
-      }
-    });
+        switch (config.practiceType) {
+          case PracticeType.mcq:
+            return _buildMcqQuestion(id: id, rule: rule, rulesPool: allRules);
+          case PracticeType.trueFalse:
+            return _buildTrueFalseQuestion(id: id, rule: rule);
+          case PracticeType.letterMatch:
+            return _buildLetterMatchQuestion(id: id, rule: rule);
+          case PracticeType.sectionMatch:
+            return _buildSectionMatchQuestion(
+              id: id,
+              rule: rule,
+              sections: sections,
+              sectionMap: sectionMap,
+            );
+        }
+      },
+    );
 
     return GeneratedPracticeQuestions(
       questions: generatedOffline,
@@ -178,39 +176,23 @@ class PracticeEngineService {
   PracticeQuestion _buildLetterMatchQuestion({
     required String id,
     required TajweedRule rule,
-    required List<TajweedRule> rulesPool,
   }) {
-    final letters = rule.letters
+    final example = rule.examples[_random.nextInt(rule.examples.length)];
+    final validLetters = rule.letters
         .where((item) => item.trim().isNotEmpty)
-        .toList();
-    final correctLetter = letters[_random.nextInt(letters.length)];
-
-    final wrongLetters = rulesPool
-        .where((item) => item.id != rule.id)
-        .expand((item) => item.letters)
-        .where((item) => item != correctLetter)
         .toSet()
         .toList();
-
-    wrongLetters.shuffle(_random);
-    final options = <String>[correctLetter, ...wrongLetters.take(3)]
-      ..shuffle(_random);
-    if (options.length < 2) {
-      final fallbackLetter = 'ءابتثجحخدذرزسشصضطظعغفقكلمنهوي'
-          .split('')
-          .firstWhere((item) => item != correctLetter, orElse: () => '');
-      if (fallbackLetter.isNotEmpty) {
-        options.add(fallbackLetter);
-      }
+    if (validLetters.isEmpty) {
+      validLetters.addAll(['ن', 'م']);
     }
 
     return PracticeQuestion(
       id: id,
       ruleId: rule.id,
-      prompt: 'أي خيار يعد من حروف ${rule.name}؟',
-      options: options,
-      correctOptionIndex: options.indexOf(correctLetter),
-      explanation: 'الحرف الصحيح: $correctLetter ضمن حروف ${rule.name}.',
+      prompt: 'اختر حرفًا من النص يحقق حكم ${rule.name}.',
+      explanation: 'الحروف الصحيحة في هذا السؤال: ${validLetters.join('، ')}.',
+      sourceText: example.text,
+      validLetters: validLetters,
     );
   }
 

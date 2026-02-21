@@ -20,8 +20,14 @@ Required fields per document:
 - `practiceType`: `string` (`mcq`, `trueFalse`, `letterMatch`, `sectionMatch`)
 - `ruleId`: `string` (must match a local Tajweed rule id)
 - `prompt`: `string`
+
+For `mcq`, `trueFalse`, `sectionMatch`:
 - `options`: `array<string>` (at least 2 options)
 - `correctOptionIndex`: `int` (within options range)
+
+For `letterMatch`:
+- `sourceText`: `string` (ayah/snippet shown as tappable letters)
+- `validLetters`: `array<string>` (one or more correct Arabic letters)
 
 Optional fields:
 - `explanation`: `string`
