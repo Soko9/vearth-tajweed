@@ -503,18 +503,23 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
     required TextStyle textStyle,
     required EdgeInsets contentPadding,
   }) {
+    final layoutWidth = maxWidth - contentPadding.horizontal;
+    if (layoutWidth <= 0) {
+      return null;
+    }
+
     final painter = TextPainter(
       text: TextSpan(text: sourceText, style: textStyle),
       textDirection: TextDirection.rtl,
       textAlign: TextAlign.right,
     );
-    painter.layout(maxWidth: maxWidth - contentPadding.horizontal);
+    painter.layout(maxWidth: layoutWidth);
 
     final textOffset =
         localPosition - Offset(contentPadding.left, contentPadding.top);
     if (textOffset.dx < 0 ||
         textOffset.dy < 0 ||
-        textOffset.dx > painter.width ||
+        textOffset.dx > layoutWidth ||
         textOffset.dy > painter.height) {
       return null;
     }
@@ -528,8 +533,27 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
       return null;
     }
 
-    final candidates = [offset, offset - 1, offset + 1, offset - 2, offset + 2];
-    for (final candidate in candidates) {
+    for (var delta = 0; delta <= 6; delta++) {
+      final candidates = delta == 0
+          ? [offset]
+          : <int>[offset - delta, offset + delta];
+      for (final candidate in candidates) {
+        if (candidate < 0 || candidate >= sourceText.length) {
+          continue;
+        }
+        final normalized = _normalizeArabicLetter(sourceText[candidate]);
+        if (normalized.isNotEmpty) {
+          return normalized;
+        }
+      }
+    }
+
+    final fallbackMatch = RegExp(r'[ء-ي]').firstMatch(sourceText);
+    if (fallbackMatch != null) {
+      return fallbackMatch.group(0);
+    }
+
+    for (final candidate in [offset - 1, offset + 1]) {
       if (candidate < 0 || candidate >= sourceText.length) {
         continue;
       }

@@ -95,17 +95,24 @@ class FirebasePracticeSourceService {
 
     final explanation = (data['explanation'] as String?)?.trim() ?? '';
     if (practiceType == PracticeType.letterMatch) {
-      final sourceText =
-          (data['sourceText'] as String?)?.trim() ??
-          (data['ayahText'] as String?)?.trim() ??
-          (data['text'] as String?)?.trim() ??
-          '';
-      final validLetters = (data['validLetters'] as List<dynamic>? ?? const [])
-          .whereType<String>()
-          .map(_normalizeArabicLetter)
-          .where((item) => item.isNotEmpty)
-          .toSet()
-          .toList();
+      final sourceText = _firstNonEmptyString(data, const [
+        'sourceText',
+        'ayahText',
+        'ayah_text',
+        'ayah',
+        'verseText',
+        'verse_text',
+        'verse',
+        'text',
+      ]);
+      final validLetters =
+          (_firstList(data, const ['validLetters', 'letters', 'ruleLetters']) ??
+                  const [])
+              .whereType<String>()
+              .map(_normalizeArabicLetter)
+              .where((item) => item.isNotEmpty)
+              .toSet()
+              .toList();
       final prompt = (data['prompt'] as String?)?.trim();
       if (sourceText.isEmpty || validLetters.isEmpty) {
         return null;
@@ -145,6 +152,26 @@ class FirebasePracticeSourceService {
       correctOptionIndex: correctOptionIndex,
       explanation: explanation,
     );
+  }
+
+  String _firstNonEmptyString(Map<String, dynamic> data, List<String> keys) {
+    for (final key in keys) {
+      final value = (data[key] as String?)?.trim();
+      if (value != null && value.isNotEmpty) {
+        return value;
+      }
+    }
+    return '';
+  }
+
+  List<dynamic>? _firstList(Map<String, dynamic> data, List<String> keys) {
+    for (final key in keys) {
+      final value = data[key];
+      if (value is List) {
+        return value;
+      }
+    }
+    return null;
   }
 
   String _normalizeArabicLetter(String input) {
