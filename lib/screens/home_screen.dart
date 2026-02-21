@@ -38,69 +38,58 @@ class _HomeScreenState extends State<HomeScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        extendBodyBehindAppBar: true,
+        backgroundColor: const Color(0xFFF5F7FA),
         appBar: AppBar(title: Text(_titleForIndex(_selectedIndex))),
-        body: DecoratedBox(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFFE2F2F6), Color(0xFFF9EEE8)],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-          child: Stack(
-            children: [
-              Positioned(
-                right: -40,
-                top: 70,
-                child: _softBlob(color: const Color(0x5528A3B8), size: 170),
-              ),
-              Positioned(
-                left: -55,
-                top: 240,
-                child: _softBlob(color: const Color(0x55F39A7E), size: 190),
-              ),
-              Positioned(
-                right: -60,
-                bottom: 80,
-                child: _softBlob(color: const Color(0x554FC3A1), size: 180),
-              ),
-              Column(
-                children: [
-                  const SizedBox(height: 90),
-                  _HeroHeader(attemptsCount: widget.attempts.length),
-                  const SizedBox(height: 8),
-                  Expanded(child: pages[_selectedIndex]),
+        body: Column(
+          children: [
+            const SizedBox(height: 6),
+            _HeroHeader(attemptsCount: widget.attempts.length),
+            const SizedBox(height: 8),
+            Expanded(child: pages[_selectedIndex]),
+          ],
+        ),
+        bottomNavigationBar: Container(
+          color: Colors.white,
+          child: SafeArea(
+            minimum: const EdgeInsets.fromLTRB(14, 0, 14, 12),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(26),
+                border: Border.all(color: const Color(0xFFE2E9EE)),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x180A2A33),
+                    blurRadius: 16,
+                    offset: Offset(0, 8),
+                  ),
                 ],
               ),
-            ],
-          ),
-        ),
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(24),
-            child: NavigationBar(
-              selectedIndex: _selectedIndex,
-              onDestinationSelected: (index) {
-                setState(() {
-                  _selectedIndex = index;
-                });
-              },
-              destinations: const [
-                NavigationDestination(
-                  icon: Icon(Icons.auto_stories_rounded),
-                  label: 'الدروس',
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(26),
+                child: NavigationBar(
+                  selectedIndex: _selectedIndex,
+                  onDestinationSelected: (index) {
+                    setState(() {
+                      _selectedIndex = index;
+                    });
+                  },
+                  destinations: const [
+                    NavigationDestination(
+                      icon: Icon(Icons.auto_stories_rounded),
+                      label: 'الدروس',
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.workspace_premium_rounded),
+                      label: 'التدريب',
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.insights_rounded),
+                      label: 'التحليل',
+                    ),
+                  ],
                 ),
-                NavigationDestination(
-                  icon: Icon(Icons.workspace_premium_rounded),
-                  label: 'التدريب',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.insights_rounded),
-                  label: 'التحليل',
-                ),
-              ],
+              ),
             ),
           ),
         ),
@@ -120,22 +109,6 @@ class _HomeScreenState extends State<HomeScreen> {
         return 'تجويد';
     }
   }
-
-  Widget _softBlob({required Color color, required double size}) {
-    return IgnorePointer(
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(color: color, blurRadius: 80, spreadRadius: 15),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 class _HeroHeader extends StatelessWidget {
@@ -152,7 +125,7 @@ class _HeroHeader extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(26),
         gradient: const LinearGradient(
-          colors: [Color(0xFF0F6272), Color(0xFF2297AD), Color(0xFF25997A)],
+          colors: [Color(0xFF255E67), Color(0xFF387D88)],
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
         ),
@@ -181,7 +154,7 @@ class _HeroHeader extends StatelessWidget {
                 const SizedBox(height: 6),
                 const Text(
                   'اقرأ الحكم، تدرب، وتابع أدق نقاط القوة والضعف.',
-                  style: TextStyle(color: Color(0xFFF0FBFF), fontSize: 16),
+                  style: TextStyle(color: Color(0xFFEDF4F6), fontSize: 16),
                 ),
                 const SizedBox(height: 10),
                 Container(

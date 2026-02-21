@@ -14,12 +14,12 @@ class LessonsScreen extends StatelessWidget {
       itemCount: tajweedSections.length,
       itemBuilder: (context, index) {
         final section = tajweedSections[index];
-        final gradients = [
-          const [Color(0xFF178399), Color(0xFF2B9E83)],
-          const [Color(0xFFE87857), Color(0xFFEE9361)],
-          const [Color(0xFF4E81D8), Color(0xFF4CA7D5)],
+        final accents = const [
+          Color(0xFF4F8D99),
+          Color(0xFFBD7A63),
+          Color(0xFF5F83B5),
         ];
-        final sectionColors = gradients[index % gradients.length];
+        final accent = accents[index % accents.length];
 
         return FadeSlideIn(
           index: index,
@@ -27,16 +27,13 @@ class LessonsScreen extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 14),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(28),
-              gradient: LinearGradient(
-                colors: sectionColors,
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-              ),
+              color: Colors.white,
+              border: Border.all(color: const Color(0xFFE3EBEF)),
               boxShadow: [
                 BoxShadow(
-                  color: sectionColors.first.withValues(alpha: 0.28),
-                  blurRadius: 18,
-                  offset: const Offset(0, 8),
+                  color: accent.withValues(alpha: 0.08),
+                  blurRadius: 14,
+                  offset: const Offset(0, 6),
                 ),
               ],
             ),
@@ -64,21 +61,21 @@ class LessonsScreen extends StatelessWidget {
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.2),
+                              color: accent.withValues(alpha: 0.14),
                               borderRadius: BorderRadius.circular(14),
                             ),
                             child: Text(
                               '${section.rules.length} أحكام',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
+                              style: TextStyle(
+                                color: accent,
+                                fontWeight: FontWeight.w800,
                               ),
                             ),
                           ),
                           const Spacer(),
-                          const Icon(
+                          Icon(
                             Icons.arrow_back_ios_new_rounded,
-                            color: Colors.white,
+                            color: accent,
                             size: 18,
                           ),
                         ],
@@ -86,8 +83,8 @@ class LessonsScreen extends StatelessWidget {
                       const SizedBox(height: 12),
                       Text(
                         section.title,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: accent,
                           fontSize: 25,
                           fontWeight: FontWeight.w800,
                         ),
@@ -95,8 +92,8 @@ class LessonsScreen extends StatelessWidget {
                       const SizedBox(height: 6),
                       Text(
                         section.overview,
-                        style: const TextStyle(
-                          color: Color(0xFFF8FCFF),
+                        style: TextStyle(
+                          color: Color(0xFF2D424A),
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -106,18 +103,16 @@ class LessonsScreen extends StatelessWidget {
                         width: double.infinity,
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.17),
+                          color: const Color(0xFFF4F8FA),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.25),
-                          ),
+                          border: Border.all(color: const Color(0xFFE2EBF0)),
                         ),
                         child: Text(
                           section.poemExcerpt,
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: Color(0xFF3B5058),
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                           ),

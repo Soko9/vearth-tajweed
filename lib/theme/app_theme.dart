@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static const Color primary = Color(0xFF136A7A);
-  static const Color secondary = Color(0xFFF26F4F);
-  static const Color accent = Color(0xFF2FAE8A);
-  static const Color mist = Color(0xFFEEF6F9);
+  static const Color primary = Color(0xFF245C66);
+  static const Color secondary = Color(0xFFE07A5F);
+  static const Color accent = Color(0xFF4D9B8A);
+  static const Color mist = Color(0xFFF5F7FA);
   static const Color card = Color(0xFFFFFFFF);
 
   static ThemeData get lightTheme {
@@ -39,8 +39,16 @@ class AppTheme {
         fontWeight: FontWeight.w700,
         fontSize: 20,
       ),
-      bodyLarge: GoogleFonts.beiruti(height: 1.6, fontSize: 18),
-      bodyMedium: GoogleFonts.beiruti(height: 1.58, fontSize: 16),
+      bodyLarge: GoogleFonts.beiruti(
+        height: 1.6,
+        fontSize: 18,
+        color: const Color(0xFF1F2D33),
+      ),
+      bodyMedium: GoogleFonts.beiruti(
+        height: 1.58,
+        fontSize: 16,
+        color: const Color(0xFF2A3A41),
+      ),
       labelLarge: GoogleFonts.beiruti(
         fontWeight: FontWeight.w700,
         fontSize: 16,
@@ -66,7 +74,10 @@ class AppTheme {
         color: card,
         elevation: 0,
         margin: EdgeInsets.zero,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: const BorderSide(color: Color(0xFFE4EBF0)),
+        ),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
@@ -108,17 +119,34 @@ class AppTheme {
       ),
       chipTheme: ChipThemeData(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        side: BorderSide.none,
-        labelStyle: textTheme.labelLarge,
-        backgroundColor: colorScheme.primaryContainer.withValues(alpha: 0.5),
-        selectedColor: colorScheme.secondaryContainer.withValues(alpha: 0.7),
+        side: const BorderSide(color: Color(0xFFD8E2E8)),
+        labelStyle: textTheme.labelLarge?.copyWith(
+          color: const Color(0xFF30444D),
+          fontWeight: FontWeight.w700,
+        ),
+        secondaryLabelStyle: textTheme.labelLarge?.copyWith(
+          color: Colors.white,
+          fontWeight: FontWeight.w800,
+        ),
+        backgroundColor: const Color(0xFFF1F5F8),
+        selectedColor: colorScheme.primary,
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: Colors.white,
-        indicatorColor: colorScheme.primaryContainer.withValues(alpha: 0.7),
-        labelTextStyle: WidgetStatePropertyAll(
-          textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w700),
-        ),
+        backgroundColor: Colors.transparent,
+        indicatorColor: colorScheme.primary.withValues(alpha: 0.14),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          final isSelected = states.contains(WidgetState.selected);
+          return textTheme.labelMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+            color: isSelected ? colorScheme.primary : const Color(0xFF6A7A82),
+          );
+        }),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          final isSelected = states.contains(WidgetState.selected);
+          return IconThemeData(
+            color: isSelected ? colorScheme.primary : const Color(0xFF7A8990),
+          );
+        }),
       ),
     );
   }

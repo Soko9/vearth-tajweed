@@ -155,10 +155,10 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
           runSpacing: 8,
           children: [
             for (final type in PracticeType.values)
-              ChoiceChip(
+              _choiceChip(
                 selected: _practiceType == type,
-                label: Text(type.label),
-                onSelected: (_) {
+                label: type.label,
+                onTap: () {
                   setState(() {
                     _practiceType = type;
                   });
@@ -244,10 +244,10 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
           runSpacing: 8,
           children: [
             for (final scope in PracticeScope.values)
-              ChoiceChip(
+              _choiceChip(
                 selected: _scope == scope,
-                label: Text(scope.label),
-                onSelected: (_) {
+                label: scope.label,
+                onTap: () {
                   setState(() {
                     _scope = scope;
                     if (scope == PracticeScope.all) {
@@ -273,10 +273,10 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
             runSpacing: 8,
             children: [
               for (final section in widget.sections)
-                ChoiceChip(
+                _choiceChip(
                   selected: _selectedSectionId == section.id,
-                  label: Text(section.title),
-                  onSelected: (_) {
+                  label: section.title,
+                  onTap: () {
                     setState(() {
                       _selectedSectionId = section.id;
                       _selectedRuleId = null;
@@ -298,14 +298,14 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
               runSpacing: 8,
               children: [
                 for (final rule in availableRules)
-                  ChoiceChip(
+                  _choiceChip(
                     selected: _selectedRuleId == rule.id,
-                    label: Text(rule.name),
+                    label: rule.name,
                     avatar: CircleAvatar(
                       radius: 5,
                       backgroundColor: rule.color,
                     ),
-                    onSelected: (_) {
+                    onTap: () {
                       setState(() {
                         _selectedRuleId = rule.id;
                       });
@@ -329,6 +329,32 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
         ),
       ),
       child: child,
+    );
+  }
+
+  Widget _choiceChip({
+    required bool selected,
+    required String label,
+    required VoidCallback onTap,
+    Widget? avatar,
+  }) {
+    return ChoiceChip(
+      selected: selected,
+      showCheckmark: false,
+      avatar: avatar,
+      side: BorderSide(
+        color: selected ? AppTheme.primary : const Color(0xFFD5E0E6),
+      ),
+      backgroundColor: const Color(0xFFF2F6F9),
+      selectedColor: AppTheme.primary,
+      label: Text(
+        label,
+        style: TextStyle(
+          color: selected ? Colors.white : const Color(0xFF2E434C),
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      onSelected: (_) => onTap(),
     );
   }
 

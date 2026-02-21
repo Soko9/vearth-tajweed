@@ -66,12 +66,9 @@ class AnalysisScreen extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
+            color: Colors.white,
             borderRadius: BorderRadius.circular(24),
-            gradient: const LinearGradient(
-              colors: [Color(0xFFFFA98B), Color(0xFFFFC982)],
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-            ),
+            border: Border.all(color: const Color(0xFFE3EAEE)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,7 +76,7 @@ class AnalysisScreen extends StatelessWidget {
               const Text(
                 'ملخص الأداء',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF23404A),
                   fontWeight: FontWeight.w800,
                   fontSize: 24,
                 ),
@@ -244,7 +241,7 @@ class AnalysisScreen extends StatelessWidget {
   }
 
   static const TextStyle _statStyle = TextStyle(
-    color: Colors.white,
+    color: Color(0xFF2E434C),
     fontWeight: FontWeight.w700,
     fontSize: 17,
   );
