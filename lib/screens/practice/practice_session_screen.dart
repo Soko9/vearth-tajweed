@@ -654,9 +654,7 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
     if (glyphInfo == null) {
       return null;
     }
-    if (!glyphInfo.graphemeClusterLayoutBounds
-        .inflate(3)
-        .contains(textOffset)) {
+    if (!glyphInfo.graphemeClusterLayoutBounds.contains(textOffset)) {
       return null;
     }
 
@@ -696,24 +694,19 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
 
     final safeStart = start.clamp(0, sourceText.length - 1);
     final safeEnd = end.clamp(0, sourceText.length);
-    final pivot = safeStart;
+    final candidates = <int>{safeStart, safeEnd - 1, safeStart - 1, safeEnd};
 
-    for (var delta = 0; delta <= 8; delta++) {
-      final candidates = delta == 0
-          ? [pivot]
-          : <int>[pivot - delta, safeEnd + delta - 1];
-      for (final candidate in candidates) {
-        if (candidate < 0 || candidate >= sourceText.length) {
-          continue;
-        }
-        final normalized = _normalizeArabicLetter(sourceText[candidate]);
-        if (normalized.isNotEmpty) {
-          return _LetterTapSelection(
-            normalizedLetter: normalized,
-            start: candidate,
-            end: candidate + 1,
-          );
-        }
+    for (final candidate in candidates) {
+      if (candidate < 0 || candidate >= sourceText.length) {
+        continue;
+      }
+      final normalized = _normalizeArabicLetter(sourceText[candidate]);
+      if (normalized.isNotEmpty) {
+        return _LetterTapSelection(
+          normalizedLetter: normalized,
+          start: candidate,
+          end: candidate + 1,
+        );
       }
     }
     return null;

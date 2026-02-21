@@ -201,7 +201,11 @@ class PracticeEngineService {
   }) {
     final explicitAyahs = _ruleAyahPool[rule.id];
     if (explicitAyahs != null && explicitAyahs.isNotEmpty) {
-      return explicitAyahs[_random.nextInt(explicitAyahs.length)];
+      final longAyahs = explicitAyahs
+          .where((ayah) => _wordCount(ayah) >= 4)
+          .toList();
+      final pool = longAyahs.isNotEmpty ? longAyahs : explicitAyahs;
+      return pool[_random.nextInt(pool.length)];
     }
     return _pickFullAyahForLetters(validLetters);
   }
@@ -219,10 +223,22 @@ class PracticeEngineService {
         .where(
           (ayah) => normalizedLetters.any((letter) => ayah.contains(letter)),
         )
+        .where((ayah) => _wordCount(ayah) >= 4)
         .toList();
-    final pool = matchingAyahs.isNotEmpty ? matchingAyahs : _fullAyahPool;
+    final fallbackPool = _fullAyahPool
+        .where((ayah) => _wordCount(ayah) >= 4)
+        .toList();
+    final pool = matchingAyahs.isNotEmpty
+        ? matchingAyahs
+        : (fallbackPool.isNotEmpty ? fallbackPool : _fullAyahPool);
     return pool[_random.nextInt(pool.length)];
   }
+
+  int _wordCount(String input) => input
+      .trim()
+      .split(RegExp(r'\s+'))
+      .where((item) => item.isNotEmpty)
+      .length;
 
   String _normalizeArabicLetter(String input) {
     final withoutMarks = input.replaceAll(
