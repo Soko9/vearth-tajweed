@@ -2,27 +2,65 @@ import 'dart:math';
 
 import '../models/practice_models.dart';
 import '../models/tajweed_models.dart';
+import 'firebase_practice_source_service.dart';
+
+class GeneratedPracticeQuestions {
+  const GeneratedPracticeQuestions({
+    required this.questions,
+    required this.usedOnlineSource,
+  });
+
+  final List<PracticeQuestion> questions;
+  final bool usedOnlineSource;
+}
 
 class PracticeEngineService {
-  final Random _random = Random();
+  PracticeEngineService({
+    FirebasePracticeSourceService? onlineSource,
+    Random? random,
+  }) : _onlineSource = onlineSource ?? FirebasePracticeSourceService(),
+       _random = random ?? Random();
+
+  final FirebasePracticeSourceService _onlineSource;
+  final Random _random;
 
   Future<List<PracticeQuestion>> generateQuestions({
     required PracticeConfig config,
     required List<TajweedSection> sections,
+  }) async =>
+      (await generateQuestionBatch(config: config, sections: sections))
+          .questions;
+
+  Future<GeneratedPracticeQuestions> generateQuestionBatch({
+    required PracticeConfig config,
+    required List<TajweedSection> sections,
   }) async {
+    final scopedRules = _resolveRules(config, sections);
+    if (scopedRules.isEmpty) {
+      return const GeneratedPracticeQuestions(
+        questions: [],
+        usedOnlineSource: false,
+      );
+    }
+
     if (config.useOnlineSource) {
-      // Simulation point for future API integration.
-      await Future<void>.delayed(const Duration(milliseconds: 700));
+      final onlineQuestions = await _onlineSource.fetchQuestions(
+        config: config,
+        sections: sections,
+      );
+      if (onlineQuestions.isNotEmpty) {
+        return GeneratedPracticeQuestions(
+          questions: onlineQuestions,
+          usedOnlineSource: true,
+        );
+      }
     }
 
     final sectionMap = {for (final section in sections) section.id: section};
     final allRules = [for (final section in sections) ...section.rules];
-    final scopedRules = _resolveRules(config, sections);
-    if (scopedRules.isEmpty) {
-      return const [];
-    }
-
-    return List<PracticeQuestion>.generate(config.questionCount, (index) {
+    final generatedOffline = List<PracticeQuestion>.generate(config.questionCount, (
+      index,
+    ) {
       final rule = scopedRules[_random.nextInt(scopedRules.length)];
       final id =
           '${config.practiceType.name}_${index}_${rule.id}_${DateTime.now().microsecondsSinceEpoch}';
@@ -47,6 +85,11 @@ class PracticeEngineService {
           );
       }
     });
+
+    return GeneratedPracticeQuestions(
+      questions: generatedOffline,
+      usedOnlineSource: false,
+    );
   }
 
   List<TajweedRule> _resolveRules(

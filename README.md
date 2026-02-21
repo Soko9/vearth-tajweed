@@ -1,16 +1,37 @@
-# tajweed
+# Tajweed
 
-A new Flutter project.
+Flutter app for Tajweed lessons and practice sessions, with optional online
+question loading from Firebase Firestore.
 
-## Getting Started
+## Firebase Online Practice (Initial Implementation)
 
-This project is a starting point for a Flutter application.
+When the user enables `مصدر أسئلة متصل` in the practice setup screen:
+- The app tries to load questions from Firestore collection
+  `practice_questions`.
+- If Firestore is unavailable, not configured, or returns no valid questions,
+  the app falls back automatically to local offline generation.
 
-A few resources to get you started if this is your first Flutter project:
+### Firestore Document Shape
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Collection: `practice_questions`
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Required fields per document:
+- `enabled`: `bool`
+- `practiceType`: `string` (`mcq`, `trueFalse`, `letterMatch`, `sectionMatch`)
+- `ruleId`: `string` (must match a local Tajweed rule id)
+- `prompt`: `string`
+- `options`: `array<string>` (at least 2 options)
+- `correctOptionIndex`: `int` (within options range)
+
+Optional fields:
+- `explanation`: `string`
+
+### Setup Notes
+
+1. Add Firebase to each target platform (Android/iOS/web) in the project.
+2. Ensure `Firebase.initializeApp()` can succeed for your target platform.
+3. Run dependency install:
+   - `flutter pub get`
+
+If Firebase is not configured yet, the app still runs and keeps practice
+working with offline questions.

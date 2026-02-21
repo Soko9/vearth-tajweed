@@ -388,10 +388,11 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
           : null,
     );
 
-    final questions = await _engine.generateQuestions(
+    final generation = await _engine.generateQuestionBatch(
       config: config,
       sections: widget.sections,
     );
+    final questions = generation.questions;
 
     if (!mounted) {
       return;
@@ -404,6 +405,12 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
     if (questions.isEmpty) {
       _showMessage('تعذر إنشاء أسئلة لهذا الاختيار.');
       return;
+    }
+
+    if (_useOnlineSource && !generation.usedOnlineSource) {
+      _showMessage(
+        'تعذر تحميل الأسئلة المتصلة حاليًا. تم استخدام الأسئلة المحلية بدلًا منها.',
+      );
     }
 
     final attempt = await Navigator.of(context).push<PracticeAttempt>(
