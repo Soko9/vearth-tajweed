@@ -4,6 +4,7 @@ import '../models/practice_models.dart';
 import '../models/tajweed_models.dart';
 import '../theme/app_theme.dart';
 import '../utils/arabic_numbers.dart';
+import '../widgets/mono_numbers_text.dart';
 
 class AnalysisScreen extends StatelessWidget {
   const AnalysisScreen({
@@ -83,15 +84,15 @@ class AnalysisScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
+              MonoNumbersText(
                 'عدد الجلسات: ${arabicInt(totalSessions)}',
                 style: _statStyle,
               ),
-              Text(
+              MonoNumbersText(
                 'إجمالي الأسئلة: ${arabicInt(totalQuestions)}',
                 style: _statStyle,
               ),
-              Text(
+              MonoNumbersText(
                 'متوسط النتيجة: ${arabicFixed(avgScore, digits: 1)}٪',
                 style: _statStyle,
               ),
@@ -138,11 +139,11 @@ class AnalysisScreen extends StatelessWidget {
                       color: AppTheme.primary,
                     ),
                   ),
-                  title: Text(
+                  title: MonoNumbersText(
                     '${attempt.practiceType.label} • ${arabicFixed(attempt.score, digits: 0)}٪',
                     style: const TextStyle(fontWeight: FontWeight.w700),
                   ),
-                  subtitle: Text(
+                  subtitle: MonoNumbersText(
                     '${_formatDate(attempt.createdAt)} • ${arabicInt(attempt.correctCount)}/${arabicInt(attempt.questionCount)}${attempt.durationMinutes != null ? ' • ${arabicInt(attempt.durationMinutes!)}د' : ''}',
                   ),
                 ),
@@ -193,7 +194,9 @@ class AnalysisScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Text('${arabicFixed(item.accuracy, digits: 0)}٪'),
+                        MonoNumbersText(
+                          '${arabicFixed(item.accuracy, digits: 0)}٪',
+                        ),
                       ],
                     ),
                     const SizedBox(height: 6),
@@ -207,7 +210,7 @@ class AnalysisScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
+                    MonoNumbersText(
                       'صحيح ${arabicInt(item.correct)} من ${arabicInt(item.total)}',
                       style: const TextStyle(color: Colors.black54),
                     ),

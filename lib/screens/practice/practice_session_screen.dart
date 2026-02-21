@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../models/practice_models.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/arabic_numbers.dart';
+import '../../widgets/mono_numbers_text.dart';
 import 'practice_result_screen.dart';
 
 class PracticeSessionScreen extends StatefulWidget {
@@ -67,7 +68,7 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
+          title: MonoNumbersText(
             'التدريب • ${arabicInt(_currentIndex + 1)}/${arabicInt(widget.questions.length)}',
           ),
           actions: [
@@ -84,7 +85,7 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
                       color: AppTheme.primary.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Text(
+                    child: MonoNumbersText(
                       _formatTime(_remainingSeconds!),
                       style: const TextStyle(
                         fontWeight: FontWeight.w800,

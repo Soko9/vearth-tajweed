@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/tajweed_content.dart';
 import '../utils/arabic_numbers.dart';
 import '../widgets/fade_slide_in.dart';
+import '../widgets/mono_numbers_text.dart';
 import 'section_rules_screen.dart';
 
 class LessonsScreen extends StatelessWidget {
@@ -65,7 +66,7 @@ class LessonsScreen extends StatelessWidget {
                               color: accent.withValues(alpha: 0.14),
                               borderRadius: BorderRadius.circular(14),
                             ),
-                            child: Text(
+                            child: MonoNumbersText(
                               '${arabicInt(section.rules.length)} أحكام',
                               style: TextStyle(
                                 color: accent,

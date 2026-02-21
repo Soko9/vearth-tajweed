@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/practice_models.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/arabic_numbers.dart';
+import '../../widgets/mono_numbers_text.dart';
 
 class PracticeResultScreen extends StatelessWidget {
   const PracticeResultScreen({required this.attempt, super.key});
@@ -34,7 +35,7 @@ class PracticeResultScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  Text(
+                  MonoNumbersText(
                     '${arabicInt(attempt.correctCount)} / ${arabicInt(attempt.questionCount)}',
                     style: const TextStyle(
                       color: Colors.white,
@@ -42,7 +43,7 @@ class PracticeResultScreen extends StatelessWidget {
                       fontWeight: FontWeight.w800,
                     ),
                   ),
-                  Text(
+                  MonoNumbersText(
                     'نسبة النجاح ${arabicFixed(attempt.score, digits: 1)}٪',
                     style: const TextStyle(
                       color: Colors.white,
@@ -52,7 +53,7 @@ class PracticeResultScreen extends StatelessWidget {
                   ),
                   if (attempt.durationMinutes != null) ...[
                     const SizedBox(height: 6),
-                    Text(
+                    MonoNumbersText(
                       'مدة الجلسة: ${arabicInt(attempt.durationMinutes!)} دقائق',
                       style: const TextStyle(color: Colors.white),
                     ),

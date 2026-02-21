@@ -4,6 +4,7 @@ import '../data/tajweed_content.dart';
 import '../models/practice_models.dart';
 import '../theme/app_theme.dart';
 import '../utils/arabic_numbers.dart';
+import '../widgets/mono_numbers_text.dart';
 import 'analysis_screen.dart';
 import 'lessons_screen.dart';
 import 'practice/practice_setup_screen.dart';
@@ -164,7 +165,7 @@ class _HeroHeader extends StatelessWidget {
                     color: Colors.white.withValues(alpha: 0.18),
                     borderRadius: BorderRadius.circular(14),
                   ),
-                  child: Text(
+                  child: MonoNumbersText(
                     'عدد التدريبات: ${arabicInt(attemptsCount)}',
                     style: const TextStyle(
                       color: Colors.white,

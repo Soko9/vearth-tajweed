@@ -6,6 +6,7 @@ import '../../services/practice_engine_service.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/arabic_numbers.dart';
 import '../../widgets/fade_slide_in.dart';
+import '../../widgets/mono_numbers_text.dart';
 import 'practice_session_screen.dart';
 
 enum SessionLengthMode { questionCount, duration }
@@ -146,7 +147,7 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        const MonoNumbersText(
           '١) نوع التدريب',
           style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
         ),
@@ -175,7 +176,7 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        const MonoNumbersText(
           '٢) طول الجلسة',
           style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
         ),
@@ -202,7 +203,7 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
           },
         ),
         const SizedBox(height: 10),
-        Text(
+        MonoNumbersText(
           _lengthMode == SessionLengthMode.questionCount
               ? 'عدد الأسئلة: ${arabicInt(_questionCount)}'
               : 'مدة التدريب: ${arabicInt(_durationMinutes)} دقائق',
@@ -235,7 +236,7 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        const MonoNumbersText(
           '٣) نطاق التدريب',
           style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
         ),
