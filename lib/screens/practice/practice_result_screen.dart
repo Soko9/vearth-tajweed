@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/practice_models.dart';
 import '../../theme/app_theme.dart';
+import '../../utils/arabic_numbers.dart';
 
 class PracticeResultScreen extends StatelessWidget {
   const PracticeResultScreen({required this.attempt, super.key});
@@ -34,7 +35,7 @@ class PracticeResultScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    '${attempt.correctCount} / ${attempt.questionCount}',
+                    '${arabicInt(attempt.correctCount)} / ${arabicInt(attempt.questionCount)}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 42,
@@ -42,7 +43,7 @@ class PracticeResultScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'نسبة النجاح ${attempt.score.toStringAsFixed(1)}%',
+                    'نسبة النجاح ${arabicFixed(attempt.score, digits: 1)}٪',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -52,7 +53,7 @@ class PracticeResultScreen extends StatelessWidget {
                   if (attempt.durationMinutes != null) ...[
                     const SizedBox(height: 6),
                     Text(
-                      'مدة الجلسة: ${attempt.durationMinutes} دقائق',
+                      'مدة الجلسة: ${arabicInt(attempt.durationMinutes!)} دقائق',
                       style: const TextStyle(color: Colors.white),
                     ),
                   ],

@@ -4,6 +4,7 @@ import '../../models/practice_models.dart';
 import '../../models/tajweed_models.dart';
 import '../../services/practice_engine_service.dart';
 import '../../theme/app_theme.dart';
+import '../../utils/arabic_numbers.dart';
 import '../../widgets/fade_slide_in.dart';
 import 'practice_session_screen.dart';
 
@@ -146,7 +147,7 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          '1) نوع التدريب',
+          '١) نوع التدريب',
           style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
         ),
         const SizedBox(height: 10),
@@ -175,7 +176,7 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          '2) طول الجلسة',
+          '٢) طول الجلسة',
           style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
         ),
         const SizedBox(height: 10),
@@ -203,8 +204,8 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
         const SizedBox(height: 10),
         Text(
           _lengthMode == SessionLengthMode.questionCount
-              ? 'عدد الأسئلة: $_questionCount'
-              : 'مدة التدريب: $_durationMinutes دقائق',
+              ? 'عدد الأسئلة: ${arabicInt(_questionCount)}'
+              : 'مدة التدريب: ${arabicInt(_durationMinutes)} دقائق',
           style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
         ),
         Slider(
@@ -235,7 +236,7 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          '3) نطاق التدريب',
+          '٣) نطاق التدريب',
           style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
         ),
         const SizedBox(height: 10),

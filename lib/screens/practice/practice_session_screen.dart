@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/practice_models.dart';
 import '../../theme/app_theme.dart';
+import '../../utils/arabic_numbers.dart';
 import 'practice_result_screen.dart';
 
 class PracticeSessionScreen extends StatefulWidget {
@@ -67,7 +68,7 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            'التدريب • ${_currentIndex + 1}/${widget.questions.length}',
+            'التدريب • ${arabicInt(_currentIndex + 1)}/${arabicInt(widget.questions.length)}',
           ),
           actions: [
             if (_remainingSeconds != null)
@@ -294,6 +295,6 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
   String _formatTime(int totalSeconds) {
     final minutes = (totalSeconds ~/ 60).toString().padLeft(2, '0');
     final seconds = (totalSeconds % 60).toString().padLeft(2, '0');
-    return '$minutes:$seconds';
+    return toArabicDigits('$minutes:$seconds');
   }
 }

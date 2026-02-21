@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/practice_models.dart';
 import '../models/tajweed_models.dart';
 import '../theme/app_theme.dart';
+import '../utils/arabic_numbers.dart';
 
 class AnalysisScreen extends StatelessWidget {
   const AnalysisScreen({
@@ -82,10 +83,16 @@ class AnalysisScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Text('عدد الجلسات: $totalSessions', style: _statStyle),
-              Text('إجمالي الأسئلة: $totalQuestions', style: _statStyle),
               Text(
-                'متوسط النتيجة: ${avgScore.toStringAsFixed(1)}%',
+                'عدد الجلسات: ${arabicInt(totalSessions)}',
+                style: _statStyle,
+              ),
+              Text(
+                'إجمالي الأسئلة: ${arabicInt(totalQuestions)}',
+                style: _statStyle,
+              ),
+              Text(
+                'متوسط النتيجة: ${arabicFixed(avgScore, digits: 1)}٪',
                 style: _statStyle,
               ),
             ],
@@ -132,11 +139,11 @@ class AnalysisScreen extends StatelessWidget {
                     ),
                   ),
                   title: Text(
-                    '${attempt.practiceType.label} • ${attempt.score.toStringAsFixed(0)}%',
+                    '${attempt.practiceType.label} • ${arabicFixed(attempt.score, digits: 0)}٪',
                     style: const TextStyle(fontWeight: FontWeight.w700),
                   ),
                   subtitle: Text(
-                    '${_formatDate(attempt.createdAt)} • ${attempt.correctCount}/${attempt.questionCount}${attempt.durationMinutes != null ? ' • ${attempt.durationMinutes}د' : ''}',
+                    '${_formatDate(attempt.createdAt)} • ${arabicInt(attempt.correctCount)}/${arabicInt(attempt.questionCount)}${attempt.durationMinutes != null ? ' • ${arabicInt(attempt.durationMinutes!)}د' : ''}',
                   ),
                 ),
             ],
@@ -186,7 +193,7 @@ class AnalysisScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Text('${item.accuracy.toStringAsFixed(0)}%'),
+                        Text('${arabicFixed(item.accuracy, digits: 0)}٪'),
                       ],
                     ),
                     const SizedBox(height: 6),
@@ -201,7 +208,7 @@ class AnalysisScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'صحيح ${item.correct} من ${item.total}',
+                      'صحيح ${arabicInt(item.correct)} من ${arabicInt(item.total)}',
                       style: const TextStyle(color: Colors.black54),
                     ),
                   ],
@@ -237,7 +244,9 @@ class AnalysisScreen extends StatelessWidget {
   String _formatDate(DateTime value) {
     final hh = value.hour.toString().padLeft(2, '0');
     final mm = value.minute.toString().padLeft(2, '0');
-    return '${value.day}/${value.month}/${value.year} - $hh:$mm';
+    return toArabicDigits(
+      '${value.day}/${value.month}/${value.year} - $hh:$mm',
+    );
   }
 
   static const TextStyle _statStyle = TextStyle(

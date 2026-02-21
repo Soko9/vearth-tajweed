@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/tajweed_content.dart';
 import '../models/practice_models.dart';
 import '../theme/app_theme.dart';
+import '../utils/arabic_numbers.dart';
 import 'analysis_screen.dart';
 import 'lessons_screen.dart';
 import 'practice/practice_setup_screen.dart';
@@ -48,47 +49,44 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(child: pages[_selectedIndex]),
           ],
         ),
-        bottomNavigationBar: Container(
-          color: Colors.white,
-          child: SafeArea(
-            minimum: const EdgeInsets.fromLTRB(14, 0, 14, 12),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(26),
-                border: Border.all(color: const Color(0xFFE2E9EE)),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0x180A2A33),
-                    blurRadius: 16,
-                    offset: Offset(0, 8),
+        bottomNavigationBar: SafeArea(
+          minimum: const EdgeInsets.fromLTRB(14, 0, 14, 12),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(26),
+              border: Border.all(color: const Color(0xFFE2E9EE)),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x180A2A33),
+                  blurRadius: 16,
+                  offset: Offset(0, 8),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(26),
+              child: NavigationBar(
+                selectedIndex: _selectedIndex,
+                onDestinationSelected: (index) {
+                  setState(() {
+                    _selectedIndex = index;
+                  });
+                },
+                destinations: const [
+                  NavigationDestination(
+                    icon: Icon(Icons.auto_stories_rounded),
+                    label: 'الدروس',
+                  ),
+                  NavigationDestination(
+                    icon: Icon(Icons.workspace_premium_rounded),
+                    label: 'التدريب',
+                  ),
+                  NavigationDestination(
+                    icon: Icon(Icons.insights_rounded),
+                    label: 'التحليل',
                   ),
                 ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(26),
-                child: NavigationBar(
-                  selectedIndex: _selectedIndex,
-                  onDestinationSelected: (index) {
-                    setState(() {
-                      _selectedIndex = index;
-                    });
-                  },
-                  destinations: const [
-                    NavigationDestination(
-                      icon: Icon(Icons.auto_stories_rounded),
-                      label: 'الدروس',
-                    ),
-                    NavigationDestination(
-                      icon: Icon(Icons.workspace_premium_rounded),
-                      label: 'التدريب',
-                    ),
-                    NavigationDestination(
-                      icon: Icon(Icons.insights_rounded),
-                      label: 'التحليل',
-                    ),
-                  ],
-                ),
               ),
             ),
           ),
@@ -167,7 +165,7 @@ class _HeroHeader extends StatelessWidget {
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Text(
-                    'عدد التدريبات: $attemptsCount',
+                    'عدد التدريبات: ${arabicInt(attemptsCount)}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
