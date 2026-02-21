@@ -4,6 +4,38 @@ import '../models/practice_models.dart';
 import '../models/tajweed_models.dart';
 import 'firebase_practice_source_service.dart';
 
+const List<String> _standardArabicLetters = [
+  'ء',
+  'ا',
+  'ب',
+  'ت',
+  'ث',
+  'ج',
+  'ح',
+  'خ',
+  'د',
+  'ذ',
+  'ر',
+  'ز',
+  'س',
+  'ش',
+  'ص',
+  'ض',
+  'ط',
+  'ظ',
+  'ع',
+  'غ',
+  'ف',
+  'ق',
+  'ك',
+  'ل',
+  'م',
+  'ن',
+  'ه',
+  'و',
+  'ي',
+];
+
 class GeneratedPracticeQuestions {
   const GeneratedPracticeQuestions({
     required this.questions,
@@ -27,9 +59,10 @@ class PracticeEngineService {
   Future<List<PracticeQuestion>> generateQuestions({
     required PracticeConfig config,
     required List<TajweedSection> sections,
-  }) async =>
-      (await generateQuestionBatch(config: config, sections: sections))
-          .questions;
+  }) async => (await generateQuestionBatch(
+    config: config,
+    sections: sections,
+  )).questions;
 
   Future<GeneratedPracticeQuestions> generateQuestionBatch({
     required PracticeConfig config,
@@ -56,40 +89,78 @@ class PracticeEngineService {
       }
     }
 
+    final eligibleRules = _eligibleRulesForType(
+      config.practiceType,
+      scopedRules,
+    );
+    if (eligibleRules.isEmpty) {
+      return const GeneratedPracticeQuestions(
+        questions: [],
+        usedOnlineSource: false,
+      );
+    }
+
     final sectionMap = {for (final section in sections) section.id: section};
     final allRules = [for (final section in sections) ...section.rules];
-    final generatedOffline = List<PracticeQuestion>.generate(config.questionCount, (
-      index,
-    ) {
-      final rule = scopedRules[_random.nextInt(scopedRules.length)];
-      final id =
-          '${config.practiceType.name}_${index}_${rule.id}_${DateTime.now().microsecondsSinceEpoch}';
+    final generatedOffline = List<PracticeQuestion>.generate(
+      config.questionCount,
+      (index) {
+        final rule = eligibleRules[_random.nextInt(eligibleRules.length)];
+        final id =
+            '${config.practiceType.name}_${index}_${rule.id}_${DateTime.now().microsecondsSinceEpoch}';
 
-      switch (config.practiceType) {
-        case PracticeType.mcq:
-          return _buildMcqQuestion(id: id, rule: rule, rulesPool: allRules);
-        case PracticeType.trueFalse:
-          return _buildTrueFalseQuestion(id: id, rule: rule);
-        case PracticeType.letterMatch:
-          return _buildLetterMatchQuestion(
-            id: id,
-            rule: rule,
-            rulesPool: allRules,
-          );
-        case PracticeType.sectionMatch:
-          return _buildSectionMatchQuestion(
-            id: id,
-            rule: rule,
-            sections: sections,
-            sectionMap: sectionMap,
-          );
-      }
-    });
+        switch (config.practiceType) {
+          case PracticeType.mcq:
+            return _buildMcqQuestion(id: id, rule: rule, rulesPool: allRules);
+          case PracticeType.trueFalse:
+            return _buildTrueFalseQuestion(id: id, rule: rule);
+          case PracticeType.letterMatch:
+            return _buildLetterMatchQuestion(
+              id: id,
+              rule: rule,
+              rulesPool: allRules,
+            );
+          case PracticeType.sectionMatch:
+            return _buildSectionMatchQuestion(
+              id: id,
+              rule: rule,
+              sections: sections,
+              sectionMap: sectionMap,
+            );
+        }
+      },
+    );
 
     return GeneratedPracticeQuestions(
       questions: generatedOffline,
       usedOnlineSource: false,
     );
+  }
+
+  List<TajweedRule> _eligibleRulesForType(
+    PracticeType type,
+    List<TajweedRule> rules,
+  ) {
+    final withLetters = rules
+        .where((rule) => rule.letters.any((item) => item.trim().isNotEmpty))
+        .toList();
+
+    switch (type) {
+      case PracticeType.mcq:
+      case PracticeType.sectionMatch:
+        return rules;
+      case PracticeType.trueFalse:
+        return withLetters;
+      case PracticeType.letterMatch:
+        return withLetters.where((rule) {
+          final normalized = rule.letters
+              .where((item) => item.trim().isNotEmpty)
+              .toSet();
+          return _standardArabicLetters.any(
+            (item) => !normalized.contains(item),
+          );
+        }).toList();
+    }
   }
 
   List<TajweedRule> _resolveRules(
@@ -151,19 +222,31 @@ class PracticeEngineService {
     required String id,
     required TajweedRule rule,
   }) {
-    final statementIsCorrect = _random.nextBool();
-    String shownLetters;
+    final ruleLetters = rule.letters
+        .where((item) => item.trim().isNotEmpty)
+        .toSet()
+        .toList();
+    final nonRuleLetters = _standardArabicLetters
+        .where((item) => !ruleLetters.contains(item))
+        .toList();
 
-    if (statementIsCorrect) {
-      shownLetters = rule.letters.take(4).join('، ');
+    var statementIsCorrect = _random.nextBool();
+    List<String> shownLettersList;
+
+    if (statementIsCorrect || nonRuleLetters.isEmpty) {
+      statementIsCorrect = true;
+      final shuffled = [...ruleLetters]..shuffle(_random);
+      shownLettersList = shuffled.take(min(4, shuffled.length)).toList();
     } else {
-      final lettersPool = 'ءابتثجحخدذرزسشصضطظعغفقكلمنهوي'.split('');
-      lettersPool.shuffle(_random);
-      shownLetters = lettersPool.take(4).join('، ');
-      if (shownLetters == rule.letters.take(4).join('، ')) {
-        shownLetters = lettersPool.reversed.take(4).join('، ');
-      }
+      final wrongLetter =
+          nonRuleLetters[_random.nextInt(nonRuleLetters.length)];
+      final shuffled = [...ruleLetters]..shuffle(_random);
+      shownLettersList = [
+        wrongLetter,
+        ...shuffled.take(min(3, shuffled.length)),
+      ]..shuffle(_random);
     }
+    final shownLetters = shownLettersList.join('، ');
 
     return PracticeQuestion(
       id: id,
@@ -182,18 +265,26 @@ class PracticeEngineService {
   }) {
     final letters = rule.letters
         .where((item) => item.trim().isNotEmpty)
+        .toSet()
         .toList();
     final correctLetter = letters[_random.nextInt(letters.length)];
 
     final wrongLetters = rulesPool
         .where((item) => item.id != rule.id)
         .expand((item) => item.letters)
-        .where((item) => item != correctLetter)
+        .where((item) => item.trim().isNotEmpty)
+        .where((item) => !letters.contains(item))
         .toSet()
         .toList();
 
-    wrongLetters.shuffle(_random);
-    final options = <String>[correctLetter, ...wrongLetters.take(3)]
+    if (wrongLetters.isEmpty) {
+      wrongLetters.addAll(
+        _standardArabicLetters.where((item) => !letters.contains(item)),
+      );
+    }
+
+    final shuffledWrongLetters = [...wrongLetters]..shuffle(_random);
+    final options = <String>[correctLetter, ...shuffledWrongLetters.take(3)]
       ..shuffle(_random);
     if (options.length < 2) {
       final fallbackLetter = 'ءابتثجحخدذرزسشصضطظعغفقكلمنهوي'
