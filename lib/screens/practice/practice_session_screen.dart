@@ -25,16 +25,27 @@ class PracticeSessionScreen extends StatefulWidget {
 class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
   int _currentIndex = 0;
   late final List<int?> _selectedOptions;
-  late final List<String?> _selectedLetters;
+  late final List<String?> _selectedLetterAnswers;
+  late final List<_LetterTapSelection?> _selectedLetterSelections;
   Timer? _timer;
   int? _remainingSeconds;
   bool _isSubmitting = false;
+
+  static const String _noRuleToken = '__NO_RULE__';
+  static const String _skipToken = '__SKIP__';
 
   @override
   void initState() {
     super.initState();
     _selectedOptions = List<int?>.filled(widget.questions.length, null);
-    _selectedLetters = List<String?>.filled(widget.questions.length, null);
+    _selectedLetterAnswers = List<String?>.filled(
+      widget.questions.length,
+      null,
+    );
+    _selectedLetterSelections = List<_LetterTapSelection?>.filled(
+      widget.questions.length,
+      null,
+    );
     if (widget.config.durationMinutes != null) {
       _remainingSeconds = widget.config.durationMinutes! * 60;
       _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -218,19 +229,19 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
     for (var i = 0; i < widget.questions.length; i++) {
       final question = widget.questions[i];
       final selectedIndex = _selectedOptions[i];
-      final selectedLetter = _selectedLetters[i];
+      final selectedLetter = _selectedLetterAnswers[i];
       final isCorrect = question.isLetterTapQuestion
-          ? _isLetterCorrect(selectedLetter, question.validLetters)
+          ? _isLetterCorrect(question, selectedLetter)
           : _isOptionCorrect(question, selectedIndex);
       if (isCorrect) {
         correctCount++;
       }
 
       final chosenAnswer = question.isLetterTapQuestion
-          ? (selectedLetter ?? 'بدون إجابة')
+          ? _letterAnswerLabel(selectedLetter)
           : _selectedOptionText(question, selectedIndex);
       final correctAnswer = question.isLetterTapQuestion
-          ? question.validLetters.join('، ')
+          ? _letterCorrectAnswerLabel(question)
           : _correctOptionText(question);
 
       answers.add(
@@ -328,10 +339,15 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
       color: Color(0xFF102126),
       height: 1.5,
     );
-    final selectedLetter = _selectedLetters[_currentIndex];
+    final selectedAnswer = _selectedLetterAnswers[_currentIndex];
+    final selection = _selectedLetterSelections[_currentIndex];
+    final selectedLetter = selection?.normalizedLetter;
+    final selectedLabel = _letterAnswerLabel(selectedAnswer);
     final isCorrect = selectedLetter == null
-        ? null
-        : _isLetterCorrect(selectedLetter, question.validLetters);
+        ? (selectedAnswer == null
+              ? null
+              : _isLetterCorrect(question, selectedAnswer))
+        : _isLetterCorrect(question, selectedAnswer);
 
     return ListView(
       children: [
@@ -351,7 +367,9 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
                   return;
                 }
                 setState(() {
-                  _selectedLetters[_currentIndex] = tappedLetter;
+                  _selectedLetterAnswers[_currentIndex] =
+                      tappedLetter.normalizedLetter;
+                  _selectedLetterSelections[_currentIndex] = tappedLetter;
                 });
               },
               child: Container(
@@ -364,17 +382,20 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
                     color: AppTheme.primary.withValues(alpha: 0.12),
                   ),
                 ),
-                child: Text(
-                  question.sourceText!,
+                child: Text.rich(
+                  _buildAyahSpan(
+                    sourceText: question.sourceText!,
+                    style: ayahStyle,
+                    selection: selection,
+                  ),
                   textAlign: TextAlign.right,
-                  style: ayahStyle,
                 ),
               ),
             );
           },
         ),
         const SizedBox(height: 10),
-        if (selectedLetter != null)
+        if (selectedAnswer != null)
           Align(
             alignment: Alignment.centerRight,
             child: Container(
@@ -387,7 +408,7 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
                 ),
               ),
               child: Text(
-                'الحرف المختار: $selectedLetter',
+                'اختيارك: $selectedLabel',
                 style: const TextStyle(
                   color: AppTheme.primary,
                   fontWeight: FontWeight.w800,
@@ -397,7 +418,37 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
             ),
           ),
         const SizedBox(height: 10),
-        if (selectedLetter == null)
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            OutlinedButton.icon(
+              onPressed: () {
+                setState(() {
+                  _selectedLetterAnswers[_currentIndex] = _noRuleToken;
+                  _selectedLetterSelections[_currentIndex] = null;
+                });
+              },
+              icon: const Icon(Icons.help_outline_rounded),
+              label: const Text('لا يوجد حكم هنا'),
+            ),
+            OutlinedButton.icon(
+              onPressed: () {
+                setState(() {
+                  _selectedLetterAnswers[_currentIndex] = _skipToken;
+                  _selectedLetterSelections[_currentIndex] = null;
+                  if (!_isLastQuestion) {
+                    _currentIndex++;
+                  }
+                });
+              },
+              icon: const Icon(Icons.skip_next_rounded),
+              label: const Text('تخطي'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        if (selectedAnswer == null)
           const Text(
             'اضغط على أي حرف من النص.',
             style: TextStyle(color: Color(0xFF50636B), fontSize: 16),
@@ -435,7 +486,7 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
   bool _hasAnswerAt(int index) {
     final question = widget.questions[index];
     if (question.isLetterTapQuestion) {
-      return _selectedLetters[index] != null;
+      return _selectedLetterAnswers[index] != null;
     }
     return _selectedOptions[index] != null;
   }
@@ -472,19 +523,62 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
     return question.options[correctIndex];
   }
 
-  bool _isLetterCorrect(String? selectedLetter, List<String> validLetters) {
+  bool _isLetterCorrect(PracticeQuestion question, String? selectedLetter) {
     if (selectedLetter == null) {
       return false;
+    }
+    if (selectedLetter == _skipToken) {
+      return false;
+    }
+    if (selectedLetter == _noRuleToken) {
+      return !_textContainsValidLetters(question);
     }
     final normalizedSelected = _normalizeArabicLetter(selectedLetter);
     if (normalizedSelected.isEmpty) {
       return false;
     }
-    final normalizedValid = validLetters
+    final normalizedValid = question.validLetters
         .map(_normalizeArabicLetter)
         .where((item) => item.isNotEmpty)
         .toSet();
     return normalizedValid.contains(normalizedSelected);
+  }
+
+  bool _textContainsValidLetters(PracticeQuestion question) {
+    final source = question.sourceText ?? '';
+    if (source.isEmpty || question.validLetters.isEmpty) {
+      return false;
+    }
+    final sourceLetters = RegExp(r'[ء-ي]')
+        .allMatches(source)
+        .map((match) => match.group(0))
+        .whereType<String>()
+        .toSet();
+    final normalizedValid = question.validLetters
+        .map(_normalizeArabicLetter)
+        .where((item) => item.isNotEmpty)
+        .toSet();
+    return normalizedValid.any(sourceLetters.contains);
+  }
+
+  String _letterCorrectAnswerLabel(PracticeQuestion question) {
+    if (!_textContainsValidLetters(question)) {
+      return 'لا يوجد حكم هنا';
+    }
+    return question.validLetters.join('، ');
+  }
+
+  String _letterAnswerLabel(String? answer) {
+    if (answer == null) {
+      return 'بدون إجابة';
+    }
+    if (answer == _noRuleToken) {
+      return 'لا يوجد حكم هنا';
+    }
+    if (answer == _skipToken) {
+      return 'تم التخطي';
+    }
+    return answer;
   }
 
   String _normalizeArabicLetter(String input) {
@@ -496,7 +590,39 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
     return match?.group(0) ?? '';
   }
 
-  String? _extractTappedLetter({
+  TextSpan _buildAyahSpan({
+    required String sourceText,
+    required TextStyle style,
+    required _LetterTapSelection? selection,
+  }) {
+    if (selection == null ||
+        selection.start < 0 ||
+        selection.end > sourceText.length ||
+        selection.start >= selection.end) {
+      return TextSpan(text: sourceText, style: style);
+    }
+
+    final before = sourceText.substring(0, selection.start);
+    final selected = sourceText.substring(selection.start, selection.end);
+    final after = sourceText.substring(selection.end);
+    return TextSpan(
+      style: style,
+      children: [
+        TextSpan(text: before),
+        TextSpan(
+          text: selected,
+          style: style.copyWith(
+            color: AppTheme.primary,
+            backgroundColor: AppTheme.primary.withValues(alpha: 0.2),
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        TextSpan(text: after),
+      ],
+    );
+  }
+
+  _LetterTapSelection? _extractTappedLetter({
     required String sourceText,
     required Offset localPosition,
     required double maxWidth,
@@ -528,6 +654,11 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
     if (glyphInfo == null) {
       return null;
     }
+    if (!glyphInfo.graphemeClusterLayoutBounds
+        .inflate(3)
+        .contains(textOffset)) {
+      return null;
+    }
 
     final range = glyphInfo.graphemeClusterCodeUnitRange;
     if (!range.isValid ||
@@ -540,7 +671,11 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
     final selectedCluster = sourceText.substring(range.start, range.end);
     final normalized = _normalizeArabicLetter(selectedCluster);
     if (normalized.isNotEmpty) {
-      return normalized;
+      return _LetterTapSelection(
+        normalizedLetter: normalized,
+        start: range.start,
+        end: range.end,
+      );
     }
 
     return _resolveLetterNearRange(
@@ -550,7 +685,7 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
     );
   }
 
-  String? _resolveLetterNearRange({
+  _LetterTapSelection? _resolveLetterNearRange({
     required String sourceText,
     required int start,
     required int end,
@@ -559,8 +694,8 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
       return null;
     }
 
-    final safeStart = start.clamp(0, sourceText.length - 1) as int;
-    final safeEnd = end.clamp(0, sourceText.length) as int;
+    final safeStart = start.clamp(0, sourceText.length - 1);
+    final safeEnd = end.clamp(0, sourceText.length);
     final pivot = safeStart;
 
     for (var delta = 0; delta <= 8; delta++) {
@@ -573,15 +708,26 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
         }
         final normalized = _normalizeArabicLetter(sourceText[candidate]);
         if (normalized.isNotEmpty) {
-          return normalized;
+          return _LetterTapSelection(
+            normalizedLetter: normalized,
+            start: candidate,
+            end: candidate + 1,
+          );
         }
       }
     }
-
-    final fallbackMatch = RegExp(r'[ء-ي]').firstMatch(sourceText);
-    if (fallbackMatch != null) {
-      return fallbackMatch.group(0);
-    }
     return null;
   }
+}
+
+class _LetterTapSelection {
+  const _LetterTapSelection({
+    required this.normalizedLetter,
+    required this.start,
+    required this.end,
+  });
+
+  final String normalizedLetter;
+  final int start;
+  final int end;
 }

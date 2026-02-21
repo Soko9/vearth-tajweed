@@ -31,6 +31,9 @@ For `letterMatch`:
   - Also accepted aliases:
     - text field: `ayahText`, `ayah_text`, `ayah`, `verseText`, `verse_text`, `verse`, `text`
     - letters field: `letters`, `ruleLetters`
+- In-app controls:
+  - `لا يوجد حكم هنا` (marks answer as no-rule)
+  - `تخطي` (skip current letter question)
 
 Optional fields:
 - `explanation`: `string`
