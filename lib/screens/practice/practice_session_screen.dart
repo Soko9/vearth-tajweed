@@ -524,19 +524,49 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
       return null;
     }
 
-    final tappedTextOffset = painter.getPositionForOffset(textOffset).offset;
-    return _resolveLetterFromOffset(sourceText, tappedTextOffset);
-  }
-
-  String? _resolveLetterFromOffset(String sourceText, int offset) {
-    if (sourceText.isEmpty || offset < 0 || offset >= sourceText.length) {
+    final glyphInfo = painter.getClosestGlyphForOffset(textOffset);
+    if (glyphInfo == null) {
       return null;
     }
 
-    for (var delta = 0; delta <= 6; delta++) {
+    final range = glyphInfo.graphemeClusterCodeUnitRange;
+    if (!range.isValid ||
+        range.start < 0 ||
+        range.end > sourceText.length ||
+        range.start >= range.end) {
+      return null;
+    }
+
+    final selectedCluster = sourceText.substring(range.start, range.end);
+    final normalized = _normalizeArabicLetter(selectedCluster);
+    if (normalized.isNotEmpty) {
+      return normalized;
+    }
+
+    return _resolveLetterNearRange(
+      sourceText: sourceText,
+      start: range.start,
+      end: range.end,
+    );
+  }
+
+  String? _resolveLetterNearRange({
+    required String sourceText,
+    required int start,
+    required int end,
+  }) {
+    if (sourceText.isEmpty) {
+      return null;
+    }
+
+    final safeStart = start.clamp(0, sourceText.length - 1) as int;
+    final safeEnd = end.clamp(0, sourceText.length) as int;
+    final pivot = safeStart;
+
+    for (var delta = 0; delta <= 8; delta++) {
       final candidates = delta == 0
-          ? [offset]
-          : <int>[offset - delta, offset + delta];
+          ? [pivot]
+          : <int>[pivot - delta, safeEnd + delta - 1];
       for (final candidate in candidates) {
         if (candidate < 0 || candidate >= sourceText.length) {
           continue;
@@ -551,16 +581,6 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
     final fallbackMatch = RegExp(r'[ء-ي]').firstMatch(sourceText);
     if (fallbackMatch != null) {
       return fallbackMatch.group(0);
-    }
-
-    for (final candidate in [offset - 1, offset + 1]) {
-      if (candidate < 0 || candidate >= sourceText.length) {
-        continue;
-      }
-      final normalized = _normalizeArabicLetter(sourceText[candidate]);
-      if (normalized.isNotEmpty) {
-        return normalized;
-      }
     }
     return null;
   }

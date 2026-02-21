@@ -177,7 +177,6 @@ class PracticeEngineService {
     required String id,
     required TajweedRule rule,
   }) {
-    final example = rule.examples[_random.nextInt(rule.examples.length)];
     final validLetters = rule.letters
         .where((item) => item.trim().isNotEmpty)
         .toSet()
@@ -191,10 +190,63 @@ class PracticeEngineService {
       ruleId: rule.id,
       prompt: 'اختر حرفًا من الآية التالية يحقق حكم ${rule.name}.',
       explanation: 'الحروف الصحيحة في هذا السؤال: ${validLetters.join('، ')}.',
-      sourceText: example.text,
+      sourceText: _pickFullAyahForLetters(validLetters),
       validLetters: validLetters,
     );
   }
+
+  String _pickFullAyahForLetters(List<String> validLetters) {
+    if (_fullAyahPool.isEmpty) {
+      return 'قُلْ هُوَ اللَّهُ أَحَدٌ';
+    }
+
+    final normalizedLetters = validLetters
+        .map(_normalizeArabicLetter)
+        .where((item) => item.isNotEmpty)
+        .toSet();
+    final matchingAyahs = _fullAyahPool
+        .where(
+          (ayah) => normalizedLetters.any((letter) => ayah.contains(letter)),
+        )
+        .toList();
+    final pool = matchingAyahs.isNotEmpty ? matchingAyahs : _fullAyahPool;
+    return pool[_random.nextInt(pool.length)];
+  }
+
+  String _normalizeArabicLetter(String input) {
+    final withoutMarks = input.replaceAll(
+      RegExp(r'[\u064B-\u065F\u0670\u06D6-\u06ED]'),
+      '',
+    );
+    final match = RegExp(r'[ء-ي]').firstMatch(withoutMarks);
+    return match?.group(0) ?? '';
+  }
+
+  static const List<String> _fullAyahPool = [
+    'قُلْ هُوَ اللَّهُ أَحَدٌ',
+    'اللَّهُ الصَّمَدُ',
+    'لَمْ يَلِدْ وَلَمْ يُولَدْ',
+    'وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ',
+    'إِنَّا أَعْطَيْنَاكَ الْكَوْثَرَ',
+    'فَصَلِّ لِرَبِّكَ وَانْحَرْ',
+    'إِنَّ شَانِئَكَ هُوَ الْأَبْتَرُ',
+    'قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ',
+    'مِن شَرِّ مَا خَلَقَ',
+    'وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ',
+    'وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ',
+    'وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ',
+    'قُلْ أَعُوذُ بِرَبِّ النَّاسِ',
+    'مَلِكِ النَّاسِ',
+    'إِلَهِ النَّاسِ',
+    'مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ',
+    'الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ',
+    'مِنَ الْجِنَّةِ وَالنَّاسِ',
+    'تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ',
+    'مَا أَغْنَىٰ عَنْهُ مَالُهُ وَمَا كَسَبَ',
+    'سَيَصْلَىٰ نَارًا ذَاتَ لَهَبٍ',
+    'وَامْرَأَتُهُ حَمَّالَةَ الْحَطَبِ',
+    'فِي جِيدِهَا حَبْلٌ مِّن مَّسَدٍ',
+  ];
 
   PracticeQuestion _buildSectionMatchQuestion({
     required String id,

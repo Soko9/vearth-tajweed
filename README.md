@@ -28,6 +28,9 @@ For `mcq`, `trueFalse`, `sectionMatch`:
 For `letterMatch`:
 - `sourceText`: `string` (full ayah text shown as tappable letters)
 - `validLetters`: `array<string>` (one or more correct Arabic letters)
+  - Also accepted aliases:
+    - text field: `ayahText`, `ayah_text`, `ayah`, `verseText`, `verse_text`, `verse`, `text`
+    - letters field: `letters`, `ruleLetters`
 
 Optional fields:
 - `explanation`: `string`
