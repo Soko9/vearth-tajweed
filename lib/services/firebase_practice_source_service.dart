@@ -95,7 +95,11 @@ class FirebasePracticeSourceService {
 
     final explanation = (data['explanation'] as String?)?.trim() ?? '';
     if (practiceType == PracticeType.letterMatch) {
-      final sourceText = (data['sourceText'] as String?)?.trim() ?? '';
+      final sourceText =
+          (data['sourceText'] as String?)?.trim() ??
+          (data['ayahText'] as String?)?.trim() ??
+          (data['text'] as String?)?.trim() ??
+          '';
       final validLetters = (data['validLetters'] as List<dynamic>? ?? const [])
           .whereType<String>()
           .map(_normalizeArabicLetter)
@@ -111,7 +115,7 @@ class FirebasePracticeSourceService {
         ruleId: ruleId,
         prompt: prompt?.isNotEmpty == true
             ? prompt!
-            : 'اختر حرفًا من النص يحقق الحكم.',
+            : 'اختر حرفًا من الآية التالية يحقق الحكم.',
         explanation: explanation,
         sourceText: sourceText,
         validLetters: validLetters,

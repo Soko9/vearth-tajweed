@@ -189,7 +189,7 @@ class PracticeEngineService {
     return PracticeQuestion(
       id: id,
       ruleId: rule.id,
-      prompt: 'اختر حرفًا من النص يحقق حكم ${rule.name}.',
+      prompt: 'اختر حرفًا من الآية التالية يحقق حكم ${rule.name}.',
       explanation: 'الحروف الصحيحة في هذا السؤال: ${validLetters.join('، ')}.',
       sourceText: example.text,
       validLetters: validLetters,

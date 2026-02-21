@@ -26,7 +26,7 @@ For `mcq`, `trueFalse`, `sectionMatch`:
 - `correctOptionIndex`: `int` (within options range)
 
 For `letterMatch`:
-- `sourceText`: `string` (ayah/snippet shown as tappable letters)
+- `sourceText`: `string` (full ayah text shown as tappable letters)
 - `validLetters`: `array<string>` (one or more correct Arabic letters)
 
 Optional fields:

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:characters/characters.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/practice_models.dart';
@@ -322,34 +321,81 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
   }
 
   Widget _buildLetterTapQuestion(PracticeQuestion question) {
+    const contentPadding = EdgeInsets.all(14);
+    const ayahStyle = TextStyle(
+      fontSize: 34,
+      fontWeight: FontWeight.w700,
+      color: Color(0xFF102126),
+      height: 1.5,
+    );
     final selectedLetter = _selectedLetters[_currentIndex];
     final isCorrect = selectedLetter == null
         ? null
         : _isLetterCorrect(selectedLetter, question.validLetters);
-    final sourceChars = question.sourceText!.characters.toList();
 
     return ListView(
       children: [
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppTheme.primary.withValues(alpha: 0.12)),
-          ),
-          child: Wrap(
-            spacing: 1,
-            runSpacing: 6,
-            children: [
-              for (final grapheme in sourceChars)
-                _buildTappableLetter(
-                  grapheme: grapheme,
-                  selectedLetter: selectedLetter,
+        LayoutBuilder(
+          builder: (context, constraints) {
+            return GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTapUp: (details) {
+                final tappedLetter = _extractTappedLetter(
+                  sourceText: question.sourceText!,
+                  localPosition: details.localPosition,
+                  maxWidth: constraints.maxWidth,
+                  textStyle: ayahStyle,
+                  contentPadding: contentPadding,
+                );
+                if (tappedLetter == null) {
+                  return;
+                }
+                setState(() {
+                  _selectedLetters[_currentIndex] = tappedLetter;
+                });
+              },
+              child: Container(
+                width: double.infinity,
+                padding: contentPadding,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(
+                    color: AppTheme.primary.withValues(alpha: 0.12),
+                  ),
                 ),
-            ],
-          ),
+                child: Text(
+                  question.sourceText!,
+                  textAlign: TextAlign.right,
+                  style: ayahStyle,
+                ),
+              ),
+            );
+          },
         ),
+        const SizedBox(height: 10),
+        if (selectedLetter != null)
+          Align(
+            alignment: Alignment.centerRight,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppTheme.primary.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: AppTheme.primary.withValues(alpha: 0.35),
+                ),
+              ),
+              child: Text(
+                'الحرف المختار: $selectedLetter',
+                style: const TextStyle(
+                  color: AppTheme.primary,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 17,
+                ),
+              ),
+            ),
+          ),
         const SizedBox(height: 10),
         if (selectedLetter == null)
           const Text(
@@ -383,44 +429,6 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
             ),
           ),
       ],
-    );
-  }
-
-  Widget _buildTappableLetter({
-    required String grapheme,
-    required String? selectedLetter,
-  }) {
-    final normalizedLetter = _normalizeArabicLetter(grapheme);
-    final isTappable = normalizedLetter.isNotEmpty;
-    final isSelected = isTappable && selectedLetter == normalizedLetter;
-
-    return InkWell(
-      borderRadius: BorderRadius.circular(8),
-      onTap: !isTappable
-          ? null
-          : () {
-              setState(() {
-                _selectedLetters[_currentIndex] = normalizedLetter;
-              });
-            },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 140),
-        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppTheme.primary.withValues(alpha: 0.18)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Text(
-          grapheme,
-          style: TextStyle(
-            fontSize: 34,
-            fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
-            color: isSelected ? AppTheme.primary : const Color(0xFF102126),
-          ),
-        ),
-      ),
     );
   }
 
@@ -486,5 +494,50 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
     );
     final match = RegExp(r'[ء-ي]').firstMatch(withoutMarks);
     return match?.group(0) ?? '';
+  }
+
+  String? _extractTappedLetter({
+    required String sourceText,
+    required Offset localPosition,
+    required double maxWidth,
+    required TextStyle textStyle,
+    required EdgeInsets contentPadding,
+  }) {
+    final painter = TextPainter(
+      text: TextSpan(text: sourceText, style: textStyle),
+      textDirection: TextDirection.rtl,
+      textAlign: TextAlign.right,
+    );
+    painter.layout(maxWidth: maxWidth - contentPadding.horizontal);
+
+    final textOffset =
+        localPosition - Offset(contentPadding.left, contentPadding.top);
+    if (textOffset.dx < 0 ||
+        textOffset.dy < 0 ||
+        textOffset.dx > painter.width ||
+        textOffset.dy > painter.height) {
+      return null;
+    }
+
+    final tappedTextOffset = painter.getPositionForOffset(textOffset).offset;
+    return _resolveLetterFromOffset(sourceText, tappedTextOffset);
+  }
+
+  String? _resolveLetterFromOffset(String sourceText, int offset) {
+    if (sourceText.isEmpty || offset < 0 || offset >= sourceText.length) {
+      return null;
+    }
+
+    final candidates = [offset, offset - 1, offset + 1, offset - 2, offset + 2];
+    for (final candidate in candidates) {
+      if (candidate < 0 || candidate >= sourceText.length) {
+        continue;
+      }
+      final normalized = _normalizeArabicLetter(sourceText[candidate]);
+      if (normalized.isNotEmpty) {
+        return normalized;
+      }
+    }
+    return null;
   }
 }
