@@ -7,9 +7,11 @@ import '../models/practice_models.dart';
 import '../models/tajweed_models.dart';
 
 class FirebasePracticeSourceService {
-  FirebasePracticeSourceService({FirebaseFirestore? firestore, Random? random})
-    : _firestore = firestore,
-      _random = random ?? Random();
+  FirebasePracticeSourceService({
+    FirebaseFirestore? firestore,
+    Random? random,
+  }) : _firestore = firestore,
+       _random = random ?? Random();
 
   final FirebaseFirestore? _firestore;
   final Random _random;
@@ -37,7 +39,7 @@ class FirebasePracticeSourceService {
           .get();
 
       final questions = snapshot.docs
-          .map((doc) => _mapQuestion(doc, scopedRuleIds, config.practiceType))
+          .map((doc) => _mapQuestion(doc, scopedRuleIds))
           .whereType<PracticeQuestion>()
           .toList();
 
@@ -85,48 +87,11 @@ class FirebasePracticeSourceService {
   PracticeQuestion? _mapQuestion(
     QueryDocumentSnapshot<Map<String, dynamic>> doc,
     Set<String> scopedRuleIds,
-    PracticeType practiceType,
   ) {
     final data = doc.data();
     final ruleId = (data['ruleId'] as String?)?.trim() ?? '';
     if (ruleId.isEmpty || !scopedRuleIds.contains(ruleId)) {
       return null;
-    }
-
-    final explanation = (data['explanation'] as String?)?.trim() ?? '';
-    if (practiceType == PracticeType.letterMatch) {
-      final sourceText = _firstNonEmptyString(data, const [
-        'sourceText',
-        'ayahText',
-        'ayah_text',
-        'ayah',
-        'verseText',
-        'verse_text',
-        'verse',
-        'text',
-      ]);
-      final validLetters =
-          (_firstList(data, const ['validLetters', 'letters', 'ruleLetters']) ??
-                  const [])
-              .whereType<String>()
-              .map(_normalizeArabicLetter)
-              .where((item) => item.isNotEmpty)
-              .toSet()
-              .toList();
-      final prompt = (data['prompt'] as String?)?.trim();
-      if (sourceText.isEmpty || validLetters.isEmpty) {
-        return null;
-      }
-      return PracticeQuestion(
-        id: doc.id,
-        ruleId: ruleId,
-        prompt: prompt?.isNotEmpty == true
-            ? prompt!
-            : 'اختر حرفًا من الآية التالية يحقق الحكم.',
-        explanation: explanation,
-        sourceText: sourceText,
-        validLetters: validLetters,
-      );
     }
 
     final prompt = (data['prompt'] as String?)?.trim() ?? '';
@@ -136,6 +101,7 @@ class FirebasePracticeSourceService {
         .where((item) => item.isNotEmpty)
         .toList();
     final correctOptionIndex = data['correctOptionIndex'] as int? ?? -1;
+    final explanation = (data['explanation'] as String?)?.trim() ?? '';
 
     if (prompt.isEmpty || options.length < 2) {
       return null;
@@ -152,39 +118,6 @@ class FirebasePracticeSourceService {
       correctOptionIndex: correctOptionIndex,
       explanation: explanation,
     );
-  }
-
-  String _firstNonEmptyString(Map<String, dynamic> data, List<String> keys) {
-    for (final key in keys) {
-      final value = (data[key] as String?)?.trim();
-      if (value != null && value.isNotEmpty) {
-        return value;
-      }
-    }
-    return '';
-  }
-
-  List<dynamic>? _firstList(Map<String, dynamic> data, List<String> keys) {
-    for (final key in keys) {
-      final value = data[key];
-      if (value is List) {
-        return value;
-      }
-    }
-    return null;
-  }
-
-  String _normalizeArabicLetter(String input) {
-    final trimmed = input.trim();
-    if (trimmed.isEmpty) {
-      return '';
-    }
-    final withoutMarks = trimmed.replaceAll(
-      RegExp(r'[\u064B-\u065F\u0670\u06D6-\u06ED]'),
-      '',
-    );
-    final match = RegExp(r'[ء-ي]').firstMatch(withoutMarks);
-    return match?.group(0) ?? '';
   }
 
   List<PracticeQuestion> _repeatToTargetCount(

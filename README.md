@@ -20,20 +20,8 @@ Required fields per document:
 - `practiceType`: `string` (`mcq`, `trueFalse`, `letterMatch`, `sectionMatch`)
 - `ruleId`: `string` (must match a local Tajweed rule id)
 - `prompt`: `string`
-
-For `mcq`, `trueFalse`, `sectionMatch`:
 - `options`: `array<string>` (at least 2 options)
 - `correctOptionIndex`: `int` (within options range)
-
-For `letterMatch`:
-- `sourceText`: `string` (full ayah text shown as tappable letters)
-- `validLetters`: `array<string>` (one or more correct Arabic letters)
-  - Also accepted aliases:
-    - text field: `ayahText`, `ayah_text`, `ayah`, `verseText`, `verse_text`, `verse`, `text`
-    - letters field: `letters`, `ruleLetters`
-- In-app controls:
-  - `لا يوجد حكم هنا` (marks answer as no-rule)
-  - `تخطي` (skip current letter question)
 
 Optional fields:
 - `explanation`: `string`

@@ -66,26 +66,17 @@ class PracticeQuestion {
     required this.id,
     required this.ruleId,
     required this.prompt,
+    required this.options,
+    required this.correctOptionIndex,
     required this.explanation,
-    this.options = const [],
-    this.correctOptionIndex,
-    this.sourceText,
-    this.validLetters = const [],
   });
 
   final String id;
   final String ruleId;
   final String prompt;
   final List<String> options;
-  final int? correctOptionIndex;
+  final int correctOptionIndex;
   final String explanation;
-  final String? sourceText;
-  final List<String> validLetters;
-
-  bool get isLetterTapQuestion =>
-      sourceText != null &&
-      sourceText!.trim().isNotEmpty &&
-      validLetters.isNotEmpty;
 }
 
 class PracticeAnswer {
