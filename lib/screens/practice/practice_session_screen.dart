@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
@@ -353,44 +354,12 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
       children: [
         LayoutBuilder(
           builder: (context, constraints) {
-            return GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTapUp: (details) {
-                final tappedLetter = _extractTappedLetter(
-                  sourceText: question.sourceText!,
-                  localPosition: details.localPosition,
-                  maxWidth: constraints.maxWidth,
-                  textStyle: ayahStyle,
-                  contentPadding: contentPadding,
-                );
-                if (tappedLetter == null) {
-                  return;
-                }
-                setState(() {
-                  _selectedLetterAnswers[_currentIndex] =
-                      tappedLetter.normalizedLetter;
-                  _selectedLetterSelections[_currentIndex] = tappedLetter;
-                });
-              },
-              child: Container(
-                width: double.infinity,
-                padding: contentPadding,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(
-                    color: AppTheme.primary.withValues(alpha: 0.12),
-                  ),
-                ),
-                child: Text.rich(
-                  _buildAyahSpan(
-                    sourceText: question.sourceText!,
-                    style: ayahStyle,
-                    selection: selection,
-                  ),
-                  textAlign: TextAlign.right,
-                ),
-              ),
+            return _buildInteractiveAyahCard(
+              sourceText: question.sourceText!,
+              maxWidth: constraints.maxWidth,
+              style: ayahStyle,
+              contentPadding: contentPadding,
+              selection: selection,
             );
           },
         ),
@@ -622,94 +591,140 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
     );
   }
 
-  _LetterTapSelection? _extractTappedLetter({
+  Widget _buildInteractiveAyahCard({
     required String sourceText,
-    required Offset localPosition,
     required double maxWidth,
-    required TextStyle textStyle,
+    required TextStyle style,
     required EdgeInsets contentPadding,
+    required _LetterTapSelection? selection,
   }) {
     final layoutWidth = maxWidth - contentPadding.horizontal;
-    if (layoutWidth <= 0) {
-      return null;
-    }
-
+    final safeWidth = layoutWidth > 0 ? layoutWidth : 1.0;
     final painter = TextPainter(
-      text: TextSpan(text: sourceText, style: textStyle),
+      text: TextSpan(text: sourceText, style: style),
       textDirection: TextDirection.rtl,
       textAlign: TextAlign.right,
-    );
-    painter.layout(maxWidth: layoutWidth);
-
-    final textOffset =
-        localPosition - Offset(contentPadding.left, contentPadding.top);
-    if (textOffset.dx < 0 ||
-        textOffset.dy < 0 ||
-        textOffset.dx > layoutWidth ||
-        textOffset.dy > painter.height) {
-      return null;
-    }
-
-    final glyphInfo = painter.getClosestGlyphForOffset(textOffset);
-    if (glyphInfo == null) {
-      return null;
-    }
-    if (!glyphInfo.graphemeClusterLayoutBounds.contains(textOffset)) {
-      return null;
-    }
-
-    final range = glyphInfo.graphemeClusterCodeUnitRange;
-    if (!range.isValid ||
-        range.start < 0 ||
-        range.end > sourceText.length ||
-        range.start >= range.end) {
-      return null;
-    }
-
-    final selectedCluster = sourceText.substring(range.start, range.end);
-    final normalized = _normalizeArabicLetter(selectedCluster);
-    if (normalized.isNotEmpty) {
-      return _LetterTapSelection(
-        normalizedLetter: normalized,
-        start: range.start,
-        end: range.end,
-      );
-    }
-
-    return _resolveLetterNearRange(
+    )..layout(maxWidth: safeWidth);
+    final tapRegions = _buildLetterTapRegions(
       sourceText: sourceText,
-      start: range.start,
-      end: range.end,
+      painter: painter,
+    );
+
+    return Container(
+      width: double.infinity,
+      padding: contentPadding,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppTheme.primary.withValues(alpha: 0.12)),
+      ),
+      child: SizedBox(
+        width: safeWidth,
+        height: painter.height,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: IgnorePointer(
+                child: Text.rich(
+                  _buildAyahSpan(
+                    sourceText: sourceText,
+                    style: style,
+                    selection: selection,
+                  ),
+                  textAlign: TextAlign.right,
+                ),
+              ),
+            ),
+            for (final region in tapRegions)
+              Positioned.fromRect(
+                rect: region.rect.inflate(0.5),
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () {
+                    setState(() {
+                      _selectedLetterAnswers[_currentIndex] =
+                          region.selection.normalizedLetter;
+                      _selectedLetterSelections[_currentIndex] =
+                          region.selection;
+                    });
+                  },
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 
-  _LetterTapSelection? _resolveLetterNearRange({
+  List<_LetterTapRegion> _buildLetterTapRegions({
     required String sourceText,
-    required int start,
-    required int end,
+    required TextPainter painter,
   }) {
-    if (sourceText.isEmpty) {
-      return null;
-    }
-
-    final safeStart = start.clamp(0, sourceText.length - 1);
-    final safeEnd = end.clamp(0, sourceText.length);
-    final candidates = <int>{safeStart, safeEnd - 1, safeStart - 1, safeEnd};
-
-    for (final candidate in candidates) {
-      if (candidate < 0 || candidate >= sourceText.length) {
+    final regions = <_LetterTapRegion>[];
+    for (var i = 0; i < sourceText.length; i++) {
+      final normalized = _normalizeArabicLetter(sourceText[i]);
+      if (normalized.isEmpty) {
         continue;
       }
-      final normalized = _normalizeArabicLetter(sourceText[candidate]);
-      if (normalized.isNotEmpty) {
-        return _LetterTapSelection(
-          normalizedLetter: normalized,
-          start: candidate,
-          end: candidate + 1,
-        );
+
+      final end = _expandSelectionEnd(sourceText: sourceText, start: i);
+      final boxes = painter.getBoxesForSelection(
+        TextSelection(baseOffset: i, extentOffset: end),
+      );
+      if (boxes.isEmpty) {
+        continue;
+      }
+      final rect = _mergeTextBoxes(boxes);
+      if (rect.width <= 0 || rect.height <= 0) {
+        continue;
+      }
+
+      regions.add(
+        _LetterTapRegion(
+          selection: _LetterTapSelection(
+            normalizedLetter: normalized,
+            start: i,
+            end: end,
+          ),
+          rect: rect,
+        ),
+      );
+      i = end - 1;
+    }
+    return regions;
+  }
+
+  int _expandSelectionEnd({required String sourceText, required int start}) {
+    var end = start + 1;
+    while (end < sourceText.length && _isArabicMark(sourceText[end])) {
+      end++;
+    }
+    return end;
+  }
+
+  bool _isArabicMark(String input) =>
+      RegExp(r'[\u064B-\u065F\u0670\u06D6-\u06ED]').hasMatch(input);
+
+  Rect _mergeTextBoxes(List<ui.TextBox> boxes) {
+    var left = boxes.first.left;
+    var top = boxes.first.top;
+    var right = boxes.first.right;
+    var bottom = boxes.first.bottom;
+    for (final box in boxes.skip(1)) {
+      if (box.left < left) {
+        left = box.left;
+      }
+      if (box.top < top) {
+        top = box.top;
+      }
+      if (box.right > right) {
+        right = box.right;
+      }
+      if (box.bottom > bottom) {
+        bottom = box.bottom;
       }
     }
-    return null;
+    return Rect.fromLTRB(left, top, right, bottom);
   }
 }
 
@@ -723,4 +738,11 @@ class _LetterTapSelection {
   final String normalizedLetter;
   final int start;
   final int end;
+}
+
+class _LetterTapRegion {
+  const _LetterTapRegion({required this.selection, required this.rect});
+
+  final _LetterTapSelection selection;
+  final Rect rect;
 }
