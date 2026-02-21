@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import '../models/practice_models.dart';
 import '../models/tajweed_models.dart';
@@ -9,10 +10,10 @@ class FirebasePracticeSourceService {
   FirebasePracticeSourceService({
     FirebaseFirestore? firestore,
     Random? random,
-  }) : _firestore = firestore ?? FirebaseFirestore.instance,
+  }) : _firestore = firestore,
        _random = random ?? Random();
 
-  final FirebaseFirestore _firestore;
+  final FirebaseFirestore? _firestore;
   final Random _random;
 
   Future<List<PracticeQuestion>> fetchQuestions({
@@ -20,12 +21,17 @@ class FirebasePracticeSourceService {
     required List<TajweedSection> sections,
   }) async {
     try {
+      if (Firebase.apps.isEmpty) {
+        return const [];
+      }
+
+      final firestore = _firestore ?? FirebaseFirestore.instance;
       final scopedRuleIds = _resolveScopedRuleIds(config, sections);
       if (scopedRuleIds.isEmpty) {
         return const [];
       }
 
-      final snapshot = await _firestore
+      final snapshot = await firestore
           .collection('practice_questions')
           .where('enabled', isEqualTo: true)
           .where('practiceType', isEqualTo: config.practiceType.name)
