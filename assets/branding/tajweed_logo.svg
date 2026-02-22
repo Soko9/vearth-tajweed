@@ -1,0 +1,39 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="shadowGrad" x1="520" y1="520" x2="760" y2="760" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#245C66" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#245C66" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Long shadow -->
+  <path d="M653 360L835 542L684 693L502 511L653 360Z" fill="url(#shadowGrad)"/>
+
+  <!-- Islamic ornamental badge -->
+  <path
+    d="M512 220
+       C544 288 608 300 662 314
+       C680 332 686 360 678 388
+       C734 396 764 444 748 496
+       C740 526 720 548 694 562
+       C702 614 676 660 628 680
+       C592 694 550 696 512 770
+       C474 696 432 694 396 680
+       C348 660 322 614 330 562
+       C304 548 284 526 276 496
+       C260 444 290 396 346 388
+       C338 360 344 332 362 314
+       C416 300 480 288 512 220Z"
+    fill="#F5F7FA"
+    stroke="#245C66"
+    stroke-width="10"
+    stroke-linejoin="round"/>
+
+  <!-- Open mushaf symbol -->
+  <g stroke="#245C66" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M395 430L510 505L625 430" stroke-width="22"/>
+    <path d="M416 416L520 486L610 430" stroke-width="13"/>
+    <path d="M448 564L576 494" stroke-width="11"/>
+    <path d="M572 564L444 494" stroke-width="11"/>
+  </g>
+</svg>

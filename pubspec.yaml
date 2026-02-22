@@ -31,19 +31,19 @@ flutter:
   uses-material-design: true
 
 flutter_native_splash:
-  color: "#EFF6F8"
-  color_dark: "#EFF6F8"
+  color: "#F5F7FA"
+  color_dark: "#F5F7FA"
   image: assets/branding/tajweed_logo.png
   image_dark: assets/branding/tajweed_logo.png
   android: true
   ios: true
   web: false
   android_12:
-    color: "#EFF6F8"
-    color_dark: "#EFF6F8"
+    color: "#F5F7FA"
+    color_dark: "#F5F7FA"
     image: assets/branding/tajweed_logo.png
-    icon_background_color: "#EFF6F8"
-    icon_background_color_dark: "#EFF6F8"
+    icon_background_color: "#F5F7FA"
+    icon_background_color_dark: "#F5F7FA"
 
 flutter_launcher_icons:
   android: "launcher_icon"
