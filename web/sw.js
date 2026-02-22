@@ -1,4 +1,4 @@
-const CACHE_NAME = "tajweed-landing-v1";
+const CACHE_NAME = "tajweed-landing-v2";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -32,6 +32,19 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") {
+    return;
+  }
+
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const cloned = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put("./index.html", cloned));
+          return response;
+        })
+        .catch(() => caches.match("./index.html")),
+    );
     return;
   }
 
