@@ -227,39 +227,27 @@
       border-radius: 18px;
       border: 1px solid var(--line);
       background: linear-gradient(165deg, #f9fcfe, #f3f8fb);
-      padding: 12px;
+      padding: 10px;
     }
 
-    .shot-preview {
+    .shot-image {
+      width: 100%;
+      display: block;
       border-radius: 14px;
-      height: 236px;
-      border: 1px solid rgba(36, 92, 102, 0.2);
-      background:
-        radial-gradient(circle at 16% 13%, rgba(77, 155, 138, 0.24), transparent 30%),
-        radial-gradient(circle at 88% 82%, rgba(224, 122, 95, 0.2), transparent 36%),
-        linear-gradient(180deg, #F5F7FA 0%, #E9F1F4 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .shot-preview img {
-      width: 120px;
-      height: 120px;
-      opacity: 0.9;
+      border: 1px solid rgba(36, 92, 102, 0.15);
+      box-shadow: 0 8px 20px rgba(17, 42, 49, 0.08);
+      background: #fff;
+      aspect-ratio: 9 / 19.5;
+      object-fit: cover;
+      object-position: center top;
     }
 
     .shot-title {
       margin-top: 8px;
       color: #2F4E57;
-      font-size: 21px;
+      font-size: 20px;
       font-weight: 700;
-    }
-
-    .hint {
-      margin-top: 8px;
-      font-size: 19px;
-      color: #5F7177;
+      text-align: center;
     }
 
     .install-msg {
@@ -294,7 +282,7 @@
       }
 
       .shots {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
       }
     }
   </style>
@@ -352,19 +340,38 @@
       <p class="lead">يمكن للمستخدمين مشاهدة الشكل العام قبل التحميل.</p>
       <div class="shots">
         <article class="shot">
-          <div class="shot-preview"><img src="icons/Icon-192.png" alt="واجهة رئيسية"></div>
-          <div class="shot-title">الشاشة الرئيسية</div>
+          <img class="shot-image" src="screenshots/screen-01.png" alt="لقطة شاشة لوحة التقدم" loading="lazy">
+          <div class="shot-title">لوحة التقدم</div>
         </article>
         <article class="shot">
-          <div class="shot-preview"><img src="icons/Icon-192.png" alt="شاشة الدروس"></div>
-          <div class="shot-title">الدروس والقواعد</div>
+          <img class="shot-image" src="screenshots/screen-02.png" alt="لقطة شاشة أحكام قوية لديك" loading="lazy">
+          <div class="shot-title">نقاط القوة</div>
         </article>
         <article class="shot">
-          <div class="shot-preview"><img src="icons/Icon-192.png" alt="شاشة التدريب"></div>
-          <div class="shot-title">جلسة التدريب</div>
+          <img class="shot-image" src="screenshots/screen-03.png" alt="لقطة شاشة تفاصيل حكم الإظهار الحلقي" loading="lazy">
+          <div class="shot-title">تفاصيل الحكم</div>
+        </article>
+        <article class="shot">
+          <img class="shot-image" src="screenshots/screen-04.png" alt="لقطة شاشة قائمة أحكام النون الساكنة والتنوين" loading="lazy">
+          <div class="shot-title">قائمة الأحكام</div>
+        </article>
+        <article class="shot">
+          <img class="shot-image" src="screenshots/screen-05.png" alt="لقطة شاشة إعداد تدريب ذكي" loading="lazy">
+          <div class="shot-title">إعداد التدريب</div>
+        </article>
+        <article class="shot">
+          <img class="shot-image" src="screenshots/screen-06.png" alt="لقطة شاشة شاشة تحفة الأطفال" loading="lazy">
+          <div class="shot-title">صفحة الدروس</div>
+        </article>
+        <article class="shot">
+          <img class="shot-image" src="screenshots/screen-07.png" alt="لقطة شاشة واجهة التطبيق" loading="lazy">
+          <div class="shot-title">واجهة أنيقة</div>
+        </article>
+        <article class="shot">
+          <img class="shot-image" src="screenshots/screen-08.png" alt="لقطة شاشة شعار التطبيق" loading="lazy">
+          <div class="shot-title">شاشة البداية</div>
         </article>
       </div>
-      <p class="hint">لإضافة لقطات حقيقية: ضع الصور داخل `web/screenshots` وعدّل العناصر في `web/index.html`.</p>
     </section>
 
     <p class="footer">© <span id="year"></span> Tajweed App</p>
