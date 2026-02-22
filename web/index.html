@@ -242,14 +242,6 @@
       object-position: center top;
     }
 
-    .shot-title {
-      margin-top: 8px;
-      color: #2F4E57;
-      font-size: 20px;
-      font-weight: 700;
-      text-align: center;
-    }
-
     .install-msg {
       margin-top: 8px;
       color: #2D5B4A;
@@ -258,10 +250,26 @@
     }
 
     .footer {
-      margin-top: 22px;
-      text-align: center;
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
       color: #5B7078;
-      font-size: 18px;
+      font-size: 17px;
+    }
+
+    .footer-logo-wrap {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 10px 16px;
+    }
+
+    .footer-logo {
+      width: 104px;
+      height: 30px;
+      display: block;
     }
 
     @media (min-width: 760px) {
@@ -341,40 +349,38 @@
       <div class="shots">
         <article class="shot">
           <img class="shot-image" src="screenshots/screen-01.png" alt="لقطة شاشة لوحة التقدم" loading="lazy">
-          <div class="shot-title">لوحة التقدم</div>
         </article>
         <article class="shot">
           <img class="shot-image" src="screenshots/screen-02.png" alt="لقطة شاشة أحكام قوية لديك" loading="lazy">
-          <div class="shot-title">نقاط القوة</div>
         </article>
         <article class="shot">
           <img class="shot-image" src="screenshots/screen-03.png" alt="لقطة شاشة تفاصيل حكم الإظهار الحلقي" loading="lazy">
-          <div class="shot-title">تفاصيل الحكم</div>
         </article>
         <article class="shot">
           <img class="shot-image" src="screenshots/screen-04.png" alt="لقطة شاشة قائمة أحكام النون الساكنة والتنوين" loading="lazy">
-          <div class="shot-title">قائمة الأحكام</div>
         </article>
         <article class="shot">
           <img class="shot-image" src="screenshots/screen-05.png" alt="لقطة شاشة إعداد تدريب ذكي" loading="lazy">
-          <div class="shot-title">إعداد التدريب</div>
         </article>
         <article class="shot">
           <img class="shot-image" src="screenshots/screen-06.png" alt="لقطة شاشة شاشة تحفة الأطفال" loading="lazy">
-          <div class="shot-title">صفحة الدروس</div>
         </article>
         <article class="shot">
           <img class="shot-image" src="screenshots/screen-07.png" alt="لقطة شاشة واجهة التطبيق" loading="lazy">
-          <div class="shot-title">واجهة أنيقة</div>
         </article>
         <article class="shot">
           <img class="shot-image" src="screenshots/screen-08.png" alt="لقطة شاشة شعار التطبيق" loading="lazy">
-          <div class="shot-title">شاشة البداية</div>
         </article>
       </div>
     </section>
 
-    <p class="footer">© <span id="year"></span> Tajweed App</p>
+    <footer class="footer">
+      <div class="footer-logo-wrap">
+        <img class="footer-logo" src="branding/vearth_logo.svg" alt="Vearth logo">
+      </div>
+      <div>Developed by Vearth</div>
+      <div>© <span id="year"></span> Tajweed App</div>
+    </footer>
   </main>
 
   <script>

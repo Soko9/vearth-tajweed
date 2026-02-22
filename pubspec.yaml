@@ -32,6 +32,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/branding/tajweed_logo.svg
+    - assets/branding/vearth_logo.svg
 
 flutter_native_splash:
   color: "#F5F7FA"

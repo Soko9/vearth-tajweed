@@ -46,96 +46,110 @@ class _AppSplashScreenState extends State<AppSplashScreen>
           children: [
             const Positioned.fill(child: _SplashBackdrop()),
             SafeArea(
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    AnimatedBuilder(
-                      animation: Listenable.merge([
-                        _pulseController,
-                        _orbitController,
-                      ]),
-                      builder: (context, _) {
-                        final pulse = 0.97 + (_pulseController.value * 0.06);
-                        final orbit = _orbitController.value * 2 * math.pi;
+              child: Stack(
+                children: [
+                  Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AnimatedBuilder(
+                          animation: Listenable.merge([
+                            _pulseController,
+                            _orbitController,
+                          ]),
+                          builder: (context, _) {
+                            final pulse =
+                                0.97 + (_pulseController.value * 0.06);
+                            final orbit = _orbitController.value * 2 * math.pi;
 
-                        return Transform.scale(
-                          scale: pulse,
-                          child: SizedBox(
-                            width: 206,
-                            height: 206,
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Container(
-                                  width: 180,
-                                  height: 180,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.88),
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: const Color(
-                                          0xFF245C66,
-                                        ).withValues(alpha: 0.15),
-                                        blurRadius: 24,
-                                        spreadRadius: 1,
-                                        offset: const Offset(0, 10),
+                            return Transform.scale(
+                              scale: pulse,
+                              child: SizedBox(
+                                width: 206,
+                                height: 206,
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Container(
+                                      width: 180,
+                                      height: 180,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.88,
+                                        ),
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: const Color(
+                                              0xFF245C66,
+                                            ).withValues(alpha: 0.15),
+                                            blurRadius: 24,
+                                            spreadRadius: 1,
+                                            offset: const Offset(0, 10),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                ),
-                                Positioned.fill(
-                                  child: CustomPaint(
-                                    painter: _OrbitDotsPainter(
-                                      angle: orbit,
-                                      ringColor: const Color(
-                                        0xFF245C66,
-                                      ).withValues(alpha: 0.24),
-                                      dotColor: const Color(0xFF245C66),
                                     ),
-                                  ),
+                                    Positioned.fill(
+                                      child: CustomPaint(
+                                        painter: _OrbitDotsPainter(
+                                          angle: orbit,
+                                          ringColor: const Color(
+                                            0xFF245C66,
+                                          ).withValues(alpha: 0.24),
+                                          dotColor: const Color(0xFF245C66),
+                                        ),
+                                      ),
+                                    ),
+                                    SvgPicture.asset(
+                                      'assets/branding/tajweed_logo.svg',
+                                      width: 122,
+                                      height: 122,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ],
                                 ),
-                                SvgPicture.asset(
-                                  'assets/branding/tajweed_logo.svg',
-                                  width: 122,
-                                  height: 122,
-                                  fit: BoxFit.contain,
-                                ),
-                              ],
-                            ),
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 28),
+                        Text(
+                          'تجويد',
+                          style: textTheme.headlineMedium?.copyWith(
+                            color: const Color(0xFF1B4A53),
+                            fontWeight: FontWeight.w800,
                           ),
-                        );
-                      },
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'تحفة الأطفال',
+                          style: textTheme.titleMedium?.copyWith(
+                            color: const Color(0xFF245C66),
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 18),
+                        Text(
+                          'جاري تجهيز التمارين...',
+                          style: textTheme.bodyMedium?.copyWith(
+                            color: const Color(0xFF48646D),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        const _LoadingDots(),
+                      ],
                     ),
-                    const SizedBox(height: 28),
-                    Text(
-                      'تجويد',
-                      style: textTheme.headlineMedium?.copyWith(
-                        color: const Color(0xFF1B4A53),
-                        fontWeight: FontWeight.w800,
-                      ),
+                  ),
+                  const Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 8),
+                      child: _PublisherFooterMark(),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'تحفة الأطفال',
-                      style: textTheme.titleMedium?.copyWith(
-                        color: const Color(0xFF245C66),
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 18),
-                    Text(
-                      'جاري تجهيز التمارين...',
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: const Color(0xFF48646D),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    const _LoadingDots(),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -296,6 +310,50 @@ class _LoadingDotsState extends State<_LoadingDots>
           }),
         );
       },
+    );
+  }
+}
+
+class _PublisherFooterMark extends StatelessWidget {
+  const _PublisherFooterMark();
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'Developed by',
+          style: textTheme.labelMedium?.copyWith(
+            color: const Color(0xFF5F7177),
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.3,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.7),
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(
+              color: const Color(0xFF245C66).withValues(alpha: 0.12),
+            ),
+          ),
+          child: SvgPicture.asset(
+            'assets/branding/vearth_logo.svg',
+            width: 86,
+            height: 24,
+            fit: BoxFit.contain,
+            colorFilter: const ColorFilter.mode(
+              Color(0xFF245C66),
+              BlendMode.srcIn,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
