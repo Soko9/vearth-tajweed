@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/tajweed_models.dart';
+import '../utils/arabic_numbers.dart';
 
 class RuleDetailsScreen extends StatelessWidget {
   const RuleDetailsScreen({
@@ -70,16 +71,7 @@ class RuleDetailsScreen extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 8),
-                  for (var i = 0; i < versesToShow.length; i++) ...[
-                    Text(
-                      versesToShow[i],
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    if (i != versesToShow.length - 1) const SizedBox(height: 6),
-                  ],
+                  ..._buildPoemBayts(versesToShow),
                 ],
               ),
             ),
@@ -183,5 +175,69 @@ class RuleDetailsScreen extends StatelessWidget {
       ),
       child: child,
     );
+  }
+
+  List<Widget> _buildPoemBayts(List<String> verses) {
+    final bayts = <List<String>>[];
+    for (var i = 0; i < verses.length; i += 2) {
+      final second = i + 1 < verses.length ? <String>[verses[i + 1]] : null;
+      bayts.add([verses[i], ...?second]);
+    }
+
+    return [
+      for (var i = 0; i < bayts.length; i++) ...[
+        Container(
+          width: double.infinity,
+          margin: EdgeInsets.only(bottom: i == bayts.length - 1 ? 0 : 10),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: rule.color.withValues(alpha: 0.07),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: rule.color.withValues(alpha: 0.25)),
+          ),
+          child: Column(
+            children: [
+              Text(
+                'البيت ${arabicInt(i + 1)}',
+                style: TextStyle(
+                  color: rule.color,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                bayts[i].first,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 17,
+                  height: 1.8,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              if (bayts[i].length > 1) ...[
+                const SizedBox(height: 4),
+                Text(
+                  '۞',
+                  style: TextStyle(
+                    color: rule.color.withValues(alpha: 0.75),
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  bayts[i][1],
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    height: 1.8,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ],
+    ];
   }
 }
