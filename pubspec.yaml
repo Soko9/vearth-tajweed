@@ -19,6 +19,7 @@ dependencies:
   shared_preferences: ^2.5.3
   firebase_core: ^3.15.2
   cloud_firestore: ^5.6.12
+  flutter_svg: ^2.2.1
 
 dev_dependencies:
   flutter_test:
@@ -29,19 +30,21 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/branding/tajweed_logo.svg
 
 flutter_native_splash:
   color: "#F5F7FA"
   color_dark: "#F5F7FA"
-  image: assets/branding/tajweed_logo.png
-  image_dark: assets/branding/tajweed_logo.png
+  image: assets/branding/tajweed_logo_splash.png
+  image_dark: assets/branding/tajweed_logo_splash.png
   android: true
   ios: true
   web: false
   android_12:
     color: "#F5F7FA"
     color_dark: "#F5F7FA"
-    image: assets/branding/tajweed_logo.png
+    image: assets/branding/tajweed_logo_android12.png
     icon_background_color: "#F5F7FA"
     icon_background_color_dark: "#F5F7FA"
 

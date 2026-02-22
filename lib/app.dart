@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'models/practice_models.dart';
+import 'screens/app_splash_screen.dart';
 import 'screens/home_screen.dart';
 import 'services/practice_storage_service.dart';
 import 'theme/app_theme.dart';
@@ -25,10 +26,17 @@ class _TajweedAppState extends State<TajweedApp> {
   }
 
   Future<void> _loadAttempts() async {
-    final attempts = await _storageService.loadAttempts();
+    final attemptsFuture = _storageService.loadAttempts();
+    await Future<void>.delayed(const Duration(milliseconds: 850));
     if (!mounted) {
       return;
     }
+
+    final attempts = await attemptsFuture;
+    if (!mounted) {
+      return;
+    }
+
     setState(() {
       _attempts = attempts;
       _isLoading = false;
@@ -59,17 +67,8 @@ class _TajweedAppState extends State<TajweedApp> {
       ],
       theme: AppTheme.lightTheme,
       home: _isLoading
-          ? const _LoadingScreen()
+          ? const AppSplashScreen()
           : HomeScreen(attempts: _attempts, onAttemptSaved: _onAttemptSaved),
     );
-  }
-}
-
-class _LoadingScreen extends StatelessWidget {
-  const _LoadingScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }
