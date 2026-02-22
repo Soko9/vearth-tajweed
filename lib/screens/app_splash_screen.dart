@@ -326,18 +326,19 @@ class _PublisherFooterMark extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          'Developed by Vearth',
+          '# Developed by Vearth',
           style: textTheme.labelMedium?.copyWith(
             color: const Color(0xFF5F7177),
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.3,
+            fontWeight: FontWeight.w400,
+            fontSize: 13,
+            letterSpacing: 0,
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 4),
         SvgPicture.asset(
           'assets/branding/vearth_logo.svg',
-          width: 84,
-          height: 22,
+          width: 70,
+          height: 18,
           fit: BoxFit.contain,
         ),
       ],
