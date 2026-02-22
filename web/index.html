@@ -252,23 +252,18 @@
     .footer {
       margin-top: 24px;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      gap: 10px;
       color: #5B7078;
-      font-size: 17px;
-    }
-
-    .footer-logo-wrap {
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 10px 16px;
+      font-size: 20px;
+      font-weight: 700;
     }
 
     .footer-logo {
-      width: 104px;
-      height: 30px;
+      width: 96px;
+      height: 26px;
       display: block;
     }
 
@@ -375,22 +370,16 @@
     </section>
 
     <footer class="footer">
-      <div class="footer-logo-wrap">
-        <img class="footer-logo" src="branding/vearth_logo.svg" alt="Vearth logo">
-      </div>
       <div>Developed by Vearth</div>
-      <div>© <span id="year"></span> Tajweed App</div>
+      <img class="footer-logo" src="branding/vearth_logo.svg" alt="Vearth logo">
     </footer>
   </main>
 
   <script>
     const iosLink = document.getElementById("ios-link");
-    const year = document.getElementById("year");
     const installBtn = document.getElementById("install-btn");
     const installMsg = document.getElementById("install-msg");
     let installPrompt = null;
-
-    year.textContent = new Date().getFullYear();
 
     // Hide iOS button until App Store/TestFlight URL is provided.
     if (iosLink.getAttribute("href") === "#") {

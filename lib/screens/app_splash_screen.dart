@@ -321,37 +321,24 @@ class _PublisherFooterMark extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Column(
+    return Row(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          'Developed by',
+          'Developed by Vearth',
           style: textTheme.labelMedium?.copyWith(
             color: const Color(0xFF5F7177),
             fontWeight: FontWeight.w700,
             letterSpacing: 0.3,
           ),
         ),
-        const SizedBox(height: 6),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.7),
-            borderRadius: BorderRadius.circular(999),
-            border: Border.all(
-              color: const Color(0xFF245C66).withValues(alpha: 0.12),
-            ),
-          ),
-          child: SvgPicture.asset(
-            'assets/branding/vearth_logo.svg',
-            width: 86,
-            height: 24,
-            fit: BoxFit.contain,
-            colorFilter: const ColorFilter.mode(
-              Color(0xFF245C66),
-              BlendMode.srcIn,
-            ),
-          ),
+        const SizedBox(width: 8),
+        SvgPicture.asset(
+          'assets/branding/vearth_logo.svg',
+          width: 84,
+          height: 22,
+          fit: BoxFit.contain,
         ),
       ],
     );
