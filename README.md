@@ -105,7 +105,6 @@ flutter run
 
 ```bash
 dart analyze
-flutter test
 ```
 
 ## Optional Online Practice (Firestore)

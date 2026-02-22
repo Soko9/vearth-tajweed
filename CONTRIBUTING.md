@@ -27,7 +27,6 @@ Run local checks:
 ```bash
 dart format .
 dart analyze
-flutter test
 ```
 
 ## Pull Request Guidelines
