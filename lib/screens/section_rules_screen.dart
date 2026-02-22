@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../data/tajweed_content.dart';
 import '../models/tajweed_models.dart';
 import 'rule_details_screen.dart';
 
@@ -33,87 +34,119 @@ class SectionRulesScreen extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             for (final rule in section.rules)
-              Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(22),
-                  border: Border.all(color: rule.color.withValues(alpha: 0.28)),
+              _RuleCard(rule: rule, section: section),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RuleCard extends StatelessWidget {
+  const _RuleCard({required this.rule, required this.section});
+
+  final TajweedRule rule;
+  final TajweedSection section;
+
+  @override
+  Widget build(BuildContext context) {
+    final rulePoemExcerpt = rulePoemExcerptById(rule.id);
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: rule.color.withValues(alpha: 0.28)),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(22),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => RuleDetailsScreen(
+                  rule: rule,
+                  sectionTitle: section.title,
+                  poemExcerpt: section.poemExcerpt,
+                  rulePoemExcerpt: rulePoemExcerpt,
                 ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(22),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => RuleDetailsScreen(
-                            rule: rule,
-                            sectionTitle: section.title,
-                            poemExcerpt: section.poemExcerpt,
-                          ),
+              ),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 11,
+                      height: 11,
+                      decoration: BoxDecoration(
+                        color: rule.color,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        rule.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 20,
                         ),
-                      );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.all(14),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                width: 11,
-                                height: 11,
-                                decoration: BoxDecoration(
-                                  color: rule.color,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  rule.name,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 20,
-                                  ),
-                                ),
-                              ),
-                              const Icon(Icons.chevron_left_rounded),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            rule.description,
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 6,
-                            runSpacing: 6,
-                            children: [
-                              for (final letter in rule.letters.take(6))
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: rule.color.withValues(alpha: 0.12),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Text(letter),
-                                ),
-                            ],
-                          ),
-                        ],
+                      ),
+                    ),
+                    const Icon(Icons.chevron_left_rounded),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(rule.description, style: const TextStyle(fontSize: 16)),
+                if (rulePoemExcerpt.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF6F9FB),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: rule.color.withValues(alpha: 0.2),
+                      ),
+                    ),
+                    child: Text(
+                      'من التحفة: $rulePoemExcerpt',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
+                ],
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    for (final letter in rule.letters.take(6))
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: rule.color.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(letter),
+                      ),
+                  ],
                 ),
-              ),
-          ],
+              ],
+            ),
+          ),
         ),
       ),
     );

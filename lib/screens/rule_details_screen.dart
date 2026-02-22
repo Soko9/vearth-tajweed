@@ -7,12 +7,14 @@ class RuleDetailsScreen extends StatelessWidget {
     required this.rule,
     required this.sectionTitle,
     required this.poemExcerpt,
+    required this.rulePoemExcerpt,
     super.key,
   });
 
   final TajweedRule rule;
   final String sectionTitle;
   final String poemExcerpt;
+  final String rulePoemExcerpt;
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +70,22 @@ class RuleDetailsScreen extends StatelessWidget {
                 ],
               ),
             ),
+            if (rulePoemExcerpt.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              _whiteCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'البيت الخاص بهذا الحكم',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(rulePoemExcerpt),
+                  ],
+                ),
+              ),
+            ],
             const SizedBox(height: 12),
             _whiteCard(
               child: Column(
