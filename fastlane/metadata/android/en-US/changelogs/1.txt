@@ -1,0 +1,6 @@
+Initial public release.
+
+- Arabic-first Tajweed lessons from Tuhfat Al-Atfal
+- Interactive practice in multiple modes
+- Performance analysis and local progress history
+- Optional Firestore online question source with offline fallback

@@ -1,0 +1,29 @@
+Tajweed is an Arabic-first educational app focused on Tajweed rules from
+Tuhfat Al-Atfal.
+
+The app helps students study rules, practice interactively, and review progress
+over time.
+
+Core features:
+
+* Structured lessons grouped by section and rule
+* Rule details with explanations, examples, and verses from the poem
+* Multiple practice types:
+  * Multiple Choice
+  * True / False
+  * Letter Match
+  * Section Match
+* Practice by all rules, specific section, or specific rule
+* Timed and question-count practice modes
+* Results view with mistake review and explanations
+* Analysis dashboard for strengths, weaknesses, and recent attempts
+* Local on-device storage of practice history
+
+Optional online mode:
+
+* Question data can be loaded from Firestore if enabled
+* Manual content management from Firebase Console
+* Automatic offline fallback if online data is unavailable
+
+Designed for learners who want a clean, modern Arabic UI and practical Tajweed
+training flow.
