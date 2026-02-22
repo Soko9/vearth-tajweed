@@ -107,6 +107,48 @@ flutter run
 dart analyze
 ```
 
+## Landing PWA (Download Page)
+
+The `web/` folder is configured as a **simple PWA landing page** (not the Flutter app UI) to publish your app globally with:
+
+- App overview and features.
+- Screenshot section.
+- Android/iOS download buttons.
+- Installable website behavior (PWA).
+
+### Configure Download Links
+
+Edit these links in `web/index.html`:
+
+- Android button (`id="android-link"`)
+- iOS button (`id="ios-link"`)
+
+Notes:
+
+- Android direct download can point to APK/AAB release URL (for example GitHub Releases).
+- iOS download must point to your App Store/TestFlight/public web install URL when available.
+
+### Add Real Screenshots
+
+1. Put screenshots in `web/screenshots/`.
+2. Replace placeholder preview blocks in `web/index.html`.
+
+### Deploy to GitHub Pages (Free)
+
+This repository includes:
+
+- `.github/workflows/deploy-pwa-pages.yml`
+
+It deploys the `web/` static site automatically on pushes to `main` or `master`.
+
+1. Push repo to GitHub.
+2. In repository settings, open **Pages**.
+3. Select **GitHub Actions** as the source.
+4. Push to `main`/`master` or run the workflow manually.
+5. Your public URL becomes:
+   - `https://<username>.github.io/<repo>/`
+   - or `https://<username>.github.io/` for a user-site repo.
+
 ## Optional Online Practice (Firestore)
 
 Online mode is intentionally simple:
