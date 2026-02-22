@@ -15,7 +15,7 @@ class TajweedApp extends StatefulWidget {
 }
 
 class _TajweedAppState extends State<TajweedApp> {
-  static const Duration _minimumSplashDuration = Duration(milliseconds: 1800);
+  static const Duration _minimumSplashDuration = Duration(seconds: 2);
   final PracticeStorageService _storageService = PracticeStorageService();
   List<PracticeAttempt> _attempts = const [];
   bool _isLoading = true;
