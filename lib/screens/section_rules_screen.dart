@@ -50,7 +50,13 @@ class _RuleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rulePoemExcerpt = rulePoemExcerptById(rule.id);
+    final rulePoemExcerpts = rulePoemExcerptsById(rule.id);
+    final rulePoemPreview = rulePoemExcerpts.isEmpty
+        ? ''
+        : rulePoemExcerpts.first;
+    final extraVersesCount = rulePoemExcerpts.length > 1
+        ? rulePoemExcerpts.length - 1
+        : 0;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -69,7 +75,7 @@ class _RuleCard extends StatelessWidget {
                   rule: rule,
                   sectionTitle: section.title,
                   poemExcerpt: section.poemExcerpt,
-                  rulePoemExcerpt: rulePoemExcerpt,
+                  rulePoemExcerpts: rulePoemExcerpts,
                 ),
               ),
             );
@@ -104,7 +110,7 @@ class _RuleCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(rule.description, style: const TextStyle(fontSize: 16)),
-                if (rulePoemExcerpt.isNotEmpty) ...[
+                if (rulePoemPreview.isNotEmpty) ...[
                   const SizedBox(height: 10),
                   Container(
                     width: double.infinity,
@@ -117,7 +123,9 @@ class _RuleCard extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'من التحفة: $rulePoemExcerpt',
+                      extraVersesCount == 0
+                          ? 'من التحفة: $rulePoemPreview'
+                          : 'من التحفة: $rulePoemPreview (+$extraVersesCount)',
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,

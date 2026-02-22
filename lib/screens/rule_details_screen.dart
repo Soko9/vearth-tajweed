@@ -7,17 +7,21 @@ class RuleDetailsScreen extends StatelessWidget {
     required this.rule,
     required this.sectionTitle,
     required this.poemExcerpt,
-    required this.rulePoemExcerpt,
+    required this.rulePoemExcerpts,
     super.key,
   });
 
   final TajweedRule rule;
   final String sectionTitle;
   final String poemExcerpt;
-  final String rulePoemExcerpt;
+  final List<String> rulePoemExcerpts;
 
   @override
   Widget build(BuildContext context) {
+    final versesToShow = rulePoemExcerpts.isEmpty
+        ? <String>[poemExcerpt]
+        : rulePoemExcerpts;
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
@@ -66,26 +70,19 @@ class RuleDetailsScreen extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 8),
-                  Text(poemExcerpt),
+                  for (var i = 0; i < versesToShow.length; i++) ...[
+                    Text(
+                      versesToShow[i],
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    if (i != versesToShow.length - 1) const SizedBox(height: 6),
+                  ],
                 ],
               ),
             ),
-            if (rulePoemExcerpt.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              _whiteCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'البيت الخاص بهذا الحكم',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(rulePoemExcerpt),
-                  ],
-                ),
-              ),
-            ],
             const SizedBox(height: 12),
             _whiteCard(
               child: Column(
