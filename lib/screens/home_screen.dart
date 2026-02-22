@@ -4,6 +4,7 @@ import '../data/tajweed_content.dart';
 import '../models/practice_models.dart';
 import '../theme/app_theme.dart';
 import '../utils/arabic_numbers.dart';
+import '../widgets/app_logo_mark.dart';
 import '../widgets/mono_numbers_text.dart';
 import 'analysis_screen.dart';
 import 'lessons_screen.dart';
@@ -177,19 +178,7 @@ class _HeroHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.22),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.auto_awesome_rounded,
-              color: Colors.white,
-              size: 28,
-            ),
-          ),
+          const AppLogoMark(size: 56, showShadow: false),
         ],
       ),
     );
