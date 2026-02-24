@@ -1,4 +1,4 @@
-enum PracticeType { mcq, trueFalse, letterMatch, sectionMatch }
+enum PracticeType { mcq, trueFalse, letterMatch, sectionMatch, definitionMatch }
 
 enum PracticeScope { all, section, rule }
 
@@ -13,6 +13,8 @@ extension PracticeTypeX on PracticeType {
         return 'تحديد الحرف';
       case PracticeType.sectionMatch:
         return 'تحديد القسم';
+      case PracticeType.definitionMatch:
+        return 'تحديد الحكم من الوصف';
     }
   }
 

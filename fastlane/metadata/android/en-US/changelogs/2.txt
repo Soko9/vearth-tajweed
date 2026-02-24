@@ -1,0 +1,7 @@
+Version 1.0.1
+
+- Major practice update with harder, richer question generation
+- New practice type: identify rule from description
+- Full practice UI refresh (setup + session)
+- Timed mode now scores only answered questions
+- Better timer/question controls and smoother flow to Analysis after practice

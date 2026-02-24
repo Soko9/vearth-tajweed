@@ -33,6 +33,11 @@ class _HomeScreenState extends State<HomeScreen> {
       PracticeSetupScreen(
         sections: tajweedSections,
         onAttemptSaved: widget.onAttemptSaved,
+        onOpenAnalysis: () {
+          setState(() {
+            _selectedIndex = 2;
+          });
+        },
       ),
       AnalysisScreen(attempts: widget.attempts, rules: allRules),
     ];

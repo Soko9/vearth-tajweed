@@ -15,6 +15,15 @@ class PracticeResultScreen extends StatelessWidget {
     final wrongAnswers = attempt.answers
         .where((answer) => !answer.isCorrect)
         .toList();
+    final answeredCount = attempt.answers
+        .where((answer) => answer.chosenAnswer != 'بدون إجابة')
+        .length;
+    final isTimed = attempt.durationMinutes != null;
+    final displayedScore = isTimed
+        ? (answeredCount == 0
+              ? 0.0
+              : (attempt.correctCount / answeredCount) * 100)
+        : attempt.score;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -36,7 +45,9 @@ class PracticeResultScreen extends StatelessWidget {
               child: Column(
                 children: [
                   MonoNumbersText(
-                    '${arabicInt(attempt.correctCount)} / ${arabicInt(attempt.questionCount)}',
+                    isTimed
+                        ? '${arabicInt(attempt.correctCount)} / ${arabicInt(answeredCount)}'
+                        : '${arabicInt(attempt.correctCount)} / ${arabicInt(attempt.questionCount)}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 42,
@@ -44,7 +55,9 @@ class PracticeResultScreen extends StatelessWidget {
                     ),
                   ),
                   MonoNumbersText(
-                    'نسبة النجاح ${arabicFixed(attempt.score, digits: 1)}٪',
+                    isTimed
+                        ? 'دقة الإجابات ${arabicFixed(displayedScore, digits: 1)}٪'
+                        : 'نسبة النجاح ${arabicFixed(attempt.score, digits: 1)}٪',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 20,
@@ -62,7 +75,7 @@ class PracticeResultScreen extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: LinearProgressIndicator(
-                      value: attempt.score / 100,
+                      value: displayedScore / 100,
                       minHeight: 10,
                       color: AppTheme.secondary,
                       backgroundColor: Colors.white.withValues(alpha: 0.3),
