@@ -1,0 +1,3 @@
+c46cc7484fb691059d73a2fc69933ae38823471eee992c58923c73cd1a6d4a81  release/v1.0.1-apk/tajweed-v1.0.1-arm64-v8a.apk
+c37002bfeb23d443808b87b4d4425ef6d1688c603ef24f1f3280a4a61877b3a1  release/v1.0.1-apk/tajweed-v1.0.1-armeabi-v7a.apk
+fc8e403824e6218afee1ac4fc9b1e4ace67fee31c86002480be8c4519363366d  release/v1.0.1-apk/tajweed-v1.0.1-x86_64.apk

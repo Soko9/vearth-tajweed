@@ -3,7 +3,6 @@ import 'dart:math';
 import '../data/tajweed_content.dart';
 import '../models/practice_models.dart';
 import '../models/tajweed_models.dart';
-import 'firebase_practice_source_service.dart';
 
 const List<String> _standardArabicLetters = [
   'ء',
@@ -63,13 +62,7 @@ class GeneratedPracticeQuestions {
 }
 
 class PracticeEngineService {
-  PracticeEngineService({
-    FirebasePracticeSourceService? onlineSource,
-    Random? random,
-  }) : _onlineSource = onlineSource ?? FirebasePracticeSourceService(),
-       _random = random ?? Random();
-
-  final FirebasePracticeSourceService _onlineSource;
+  PracticeEngineService({Random? random}) : _random = random ?? Random();
   final Random _random;
   int _questionIdCounter = 0;
 
@@ -91,19 +84,6 @@ class PracticeEngineService {
         questions: [],
         usedOnlineSource: false,
       );
-    }
-
-    if (config.useOnlineSource) {
-      final onlineQuestions = await _onlineSource.fetchQuestions(
-        config: config,
-        sections: sections,
-      );
-      if (onlineQuestions.isNotEmpty) {
-        return GeneratedPracticeQuestions(
-          questions: onlineQuestions,
-          usedOnlineSource: true,
-        );
-      }
     }
 
     final eligibleRules = _eligibleRulesForType(
