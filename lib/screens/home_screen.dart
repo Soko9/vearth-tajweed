@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../data/tajweed_content.dart';
 import '../models/practice_models.dart';
+import '../services/update_checker_service.dart';
 import '../theme/app_theme.dart';
 import '../utils/arabic_numbers.dart';
 import '../widgets/mono_numbers_text.dart';
@@ -24,7 +26,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  static const UpdateCheckerService _updateChecker = UpdateCheckerService(
+    owner: 'Soko9',
+    repo: 'vearth-tajweed',
+  );
+
   int _selectedIndex = 0;
+  bool _isCheckingUpdate = false;
+  String? _lastPromptedVersion;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkForAppUpdates(auto: true);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +63,24 @@ class _HomeScreenState extends State<HomeScreen> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: const Color(0xFFF5F7FA),
-        appBar: AppBar(title: Text(_titleForIndex(_selectedIndex))),
+        appBar: AppBar(
+          title: Text(_titleForIndex(_selectedIndex)),
+          actions: [
+            IconButton(
+              tooltip: 'التحقق من التحديث',
+              onPressed: _isCheckingUpdate
+                  ? null
+                  : () => _checkForAppUpdates(auto: false),
+              icon: _isCheckingUpdate
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.system_update_alt_rounded),
+            ),
+          ],
+        ),
         body: Column(
           children: [
             const SizedBox(height: 6),
@@ -112,6 +146,84 @@ class _HomeScreenState extends State<HomeScreen> {
       default:
         return 'تجويد';
     }
+  }
+
+  Future<void> _checkForAppUpdates({required bool auto}) async {
+    if (_isCheckingUpdate) {
+      return;
+    }
+    setState(() {
+      _isCheckingUpdate = true;
+    });
+
+    final result = await _updateChecker.checkForUpdate();
+
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _isCheckingUpdate = false;
+    });
+
+    if (result == null) {
+      if (!auto) {
+        _showMessage('تعذر التحقق من التحديث الآن.');
+      }
+      return;
+    }
+
+    if (!result.hasUpdate) {
+      if (!auto) {
+        _showMessage('أنت على أحدث إصدار حاليًا.');
+      }
+      return;
+    }
+
+    if (auto && _lastPromptedVersion == result.latestVersion) {
+      return;
+    }
+
+    _lastPromptedVersion = result.latestVersion;
+    await _showUpdateDialog(result);
+  }
+
+  Future<void> _showUpdateDialog(UpdateCheckResult result) async {
+    await showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('تحديث جديد متاح'),
+          content: Text(
+            'الإصدار الحالي: ${result.currentVersion}\n'
+            'الإصدار الجديد: ${result.latestVersion}\n\n'
+            'هل تريد تنزيل التحديث الآن؟',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('لاحقًا'),
+            ),
+            FilledButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                final launched = await launchUrl(
+                  Uri.parse(result.releaseUrl),
+                  mode: LaunchMode.externalApplication,
+                );
+                if (!launched && mounted) {
+                  _showMessage('تعذر فتح رابط التحميل.');
+                }
+              },
+              child: const Text('تنزيل'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showMessage(String text) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
   }
 }
 

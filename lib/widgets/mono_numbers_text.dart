@@ -31,9 +31,7 @@ class MonoNumbersText extends StatelessWidget {
       if (match.start > start) {
         spans.add(TextSpan(text: data.substring(start, match.start)));
       }
-      spans.add(
-        TextSpan(text: match.group(0), style: monoStyle),
-      );
+      spans.add(TextSpan(text: match.group(0), style: monoStyle));
       start = match.end;
     }
     if (start < data.length) {
