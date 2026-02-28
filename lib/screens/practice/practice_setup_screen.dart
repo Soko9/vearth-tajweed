@@ -193,9 +193,9 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.94),
+        color: AppTheme.surface(context),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppTheme.primary.withValues(alpha: 0.1)),
+        border: Border.all(color: AppTheme.border(context)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,8 +225,8 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
                     ),
                     Text(
                       subtitle,
-                      style: const TextStyle(
-                        color: Color(0xFF52707A),
+                      style: TextStyle(
+                        color: AppTheme.mutedText(context),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -276,9 +276,9 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
             borderRadius: BorderRadius.circular(16),
             color: selected
                 ? AppTheme.primary.withValues(alpha: 0.12)
-                : const Color(0xFFF4F7F9),
+                : AppTheme.surfaceAlt(context),
             border: Border.all(
-              color: selected ? AppTheme.primary : const Color(0xFFD8E4EA),
+              color: selected ? AppTheme.primary : AppTheme.border(context),
               width: selected ? 1.5 : 1,
             ),
           ),
@@ -287,22 +287,26 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
             children: [
               Icon(
                 _iconForPracticeType(type),
-                color: selected ? AppTheme.primary : const Color(0xFF55717B),
+                color: selected
+                    ? AppTheme.primary
+                    : AppTheme.mutedText(context),
               ),
               const SizedBox(height: 8),
               Text(
                 type.label,
                 style: TextStyle(
                   fontWeight: FontWeight.w800,
-                  color: selected ? AppTheme.primary : const Color(0xFF2E4650),
+                  color: selected
+                      ? AppTheme.primary
+                      : Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 _typeSubtitle(type),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
-                  color: Color(0xFF5E7780),
+                  color: AppTheme.mutedText(context),
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -356,8 +360,10 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
           width: double.infinity,
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFFF8FCFD), Color(0xFFEEF7FA)],
+            gradient: LinearGradient(
+              colors: AppTheme.isDark(context)
+                  ? const [Color(0xFF1F3036), Color(0xFF172228)]
+                  : const [Color(0xFFF8FCFD), Color(0xFFEEF7FA)],
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
             ),
@@ -387,8 +393,8 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
                       isQuestionMode
                           ? 'اسحب لتحديد عدد الأسئلة'
                           : 'اسحب لتحديد مدة المؤقت',
-                      style: const TextStyle(
-                        color: Color(0xFF31545E),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -418,11 +424,9 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.fromLTRB(10, 12, 10, 12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.92),
+                  color: AppTheme.surface(context),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: AppTheme.primary.withValues(alpha: 0.1),
-                  ),
+                  border: Border.all(color: AppTheme.border(context)),
                 ),
                 child: Column(
                   children: [
@@ -450,9 +454,9 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
                     ),
                     Text(
                       isQuestionMode ? 'سؤال' : 'دقيقة',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF4A6871),
+                        color: AppTheme.mutedText(context),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -501,12 +505,12 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
                               style: TextStyle(
                                 color: section == safeCurrentValue
                                     ? Colors.white
-                                    : const Color(0xFF325962),
+                                    : Theme.of(context).colorScheme.onSurface,
                                 fontWeight: FontWeight.w800,
                               ),
                             ),
                             selectedColor: AppTheme.primary,
-                            backgroundColor: const Color(0xFFF2F7FA),
+                            backgroundColor: AppTheme.surfaceAlt(context),
                             side: BorderSide(
                               color: section == safeCurrentValue
                                   ? AppTheme.primary
@@ -535,9 +539,9 @@ class _PracticeSetupScreenState extends State<PracticeSetupScreen> {
           isQuestionMode
               ? 'من ${arabicInt(5)} إلى ${arabicInt(50)} سؤال'
               : 'من ${arabicInt(1)} إلى ${arabicInt(6)} دقائق',
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.w700,
-            color: Color(0xFF4D6770),
+            color: AppTheme.mutedText(context),
           ),
         ),
       ],

@@ -1,0 +1,6 @@
+Version 1.0.3
+
+- Added full dark theme support across the app (system-aware)
+- Updated core lesson/practice/analysis surfaces for improved night readability
+- Refined splash experience for dark mode
+- Updated PWA landing page with automatic dark mode styling

@@ -7,7 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="description"
     content="تطبيق تجويد - تحفة الأطفال: تعلّم الأحكام بدروس منظمة، تدريب تفاعلي، وتحليل التقدم.">
-  <meta name="theme-color" content="#245C66">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#245C66">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0F171A">
+  <meta name="color-scheme" content="light dark">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="تجويد">
@@ -291,6 +293,84 @@
         grid-template-columns: repeat(4, minmax(0, 1fr));
       }
     }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --mist: #0F171A;
+        --card: #19242A;
+        --text: #EAF3F7;
+        --muted: #A9BDC5;
+        --line: #334A54;
+        --shadow: 0 16px 34px rgba(0, 0, 0, 0.36);
+      }
+
+      html,
+      body {
+        background: linear-gradient(180deg, #0F171A 0%, #142028 55%, #0F171A 100%);
+      }
+
+      .hero {
+        border: 1px solid rgba(95, 170, 181, 0.3);
+        background:
+          radial-gradient(circle at 9% 12%, rgba(77, 155, 138, 0.3), transparent 28%),
+          radial-gradient(circle at 93% 18%, rgba(224, 122, 95, 0.22), transparent 24%),
+          linear-gradient(145deg, rgba(30, 44, 50, 0.94), rgba(24, 36, 42, 0.9));
+      }
+
+      .brand {
+        border-color: rgba(95, 170, 181, 0.32);
+        background: rgba(39, 56, 62, 0.86);
+        color: #9EC7CF;
+      }
+
+      h1 {
+        color: #EAF3F7;
+      }
+
+      .btn-outline {
+        color: #A8CED6;
+        border-color: rgba(95, 170, 181, 0.5);
+        background: rgba(39, 56, 62, 0.86);
+      }
+
+      .hero-card {
+        background: linear-gradient(160deg, rgba(29, 43, 49, 1), rgba(25, 36, 42, 0.9));
+      }
+
+      .section {
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.34);
+      }
+
+      .feature {
+        background: linear-gradient(160deg, #223239, #19262C);
+      }
+
+      .feature strong {
+        color: #C4DCE3;
+      }
+
+      .feature span {
+        color: #AFC4CB;
+      }
+
+      .shot {
+        background: linear-gradient(165deg, #1F2D33, #172228);
+      }
+
+      .shot-image {
+        border: 1px solid rgba(95, 170, 181, 0.3);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.34);
+        background: #18242A;
+      }
+
+      .install-msg {
+        color: #88CDB3;
+      }
+
+      .footer {
+        color: #94AAB2;
+      }
+    }
   </style>
 </head>
 
@@ -307,7 +387,7 @@
           <p>دروس منظمة، تدريب عملي، وتحليل واضح لتقدّمك في مكان واحد.</p>
           <div class="cta">
             <a class="btn btn-primary" id="android-link"
-              href="https://github.com/Soko9/vearth-tajweed/releases/download/v1.0.2/tajweed-v1.0.2.apk" target="_blank"
+              href="https://github.com/Soko9/vearth-tajweed/releases/download/v1.0.3/tajweed-v1.0.3-arm64-v8a.apk" target="_blank"
               rel="noopener">تحميل أندرويد</a>
             <a class="btn btn-secondary" id="ios-link" href="#" target="_blank" rel="noopener">تحميل iOS</a>
             <button class="btn btn-outline" id="install-btn" hidden>تثبيت الموقع كتطبيق</button>

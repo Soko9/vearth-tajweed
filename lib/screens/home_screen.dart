@@ -45,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = AppTheme.isDark(context);
     final pages = [
       const LessonsScreen(),
       PracticeSetupScreen(
@@ -62,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF5F7FA),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           title: Text(_titleForIndex(_selectedIndex)),
           actions: [
@@ -93,12 +94,14 @@ class _HomeScreenState extends State<HomeScreen> {
           minimum: const EdgeInsets.fromLTRB(14, 0, 14, 12),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppTheme.surface(context),
               borderRadius: BorderRadius.circular(26),
-              border: Border.all(color: const Color(0xFFE2E9EE)),
-              boxShadow: const [
+              border: Border.all(color: AppTheme.border(context)),
+              boxShadow: [
                 BoxShadow(
-                  color: Color(0x180A2A33),
+                  color: isDark
+                      ? Colors.black.withValues(alpha: 0.28)
+                      : const Color(0x180A2A33),
                   blurRadius: 16,
                   offset: Offset(0, 8),
                 ),

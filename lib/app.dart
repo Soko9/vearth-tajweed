@@ -66,6 +66,8 @@ class _TajweedAppState extends State<TajweedApp> {
         GlobalWidgetsLocalizations.delegate,
       ],
       theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
       home: _isLoading
           ? const AppSplashScreen()
           : HomeScreen(attempts: _attempts, onAttemptSaved: _onAttemptSaved),

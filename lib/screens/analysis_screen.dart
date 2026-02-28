@@ -25,8 +25,9 @@ class AnalysisScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppTheme.surface(context),
               borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: AppTheme.border(context)),
             ),
             child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,17 +69,17 @@ class AnalysisScreen extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppTheme.surface(context),
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: const Color(0xFFE3EAEE)),
+            border: Border.all(color: AppTheme.border(context)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'ملخص الأداء',
                 style: TextStyle(
-                  color: Color(0xFF23404A),
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w800,
                   fontSize: 24,
                 ),
@@ -86,21 +87,22 @@ class AnalysisScreen extends StatelessWidget {
               const SizedBox(height: 8),
               MonoNumbersText(
                 'عدد الجلسات: ${arabicInt(totalSessions)}',
-                style: _statStyle,
+                style: _statStyle(context),
               ),
               MonoNumbersText(
                 'إجمالي الأسئلة: ${arabicInt(totalQuestions)}',
-                style: _statStyle,
+                style: _statStyle(context),
               ),
               MonoNumbersText(
                 'متوسط النتيجة: ${arabicFixed(avgScore, digits: 1)}٪',
-                style: _statStyle,
+                style: _statStyle(context),
               ),
             ],
           ),
         ),
         const SizedBox(height: 12),
         _ruleBlock(
+          context: context,
           title: 'أحكام تحتاج تدريبًا أكثر',
           data: weakRules.take(4).toList(),
           emptyText: 'الأداء متوازن الآن.',
@@ -108,6 +110,7 @@ class AnalysisScreen extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         _ruleBlock(
+          context: context,
           title: 'أحكام قوية لديك',
           data: strongRules.take(4).toList(),
           emptyText: 'أكمل تدريبات أكثر لإظهار نقاط القوة.',
@@ -117,8 +120,9 @@ class AnalysisScreen extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppTheme.surface(context),
             borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: AppTheme.border(context)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,6 +159,7 @@ class AnalysisScreen extends StatelessWidget {
   }
 
   Widget _ruleBlock({
+    required BuildContext context,
     required String title,
     required List<_RuleStat> data,
     required String emptyText,
@@ -163,8 +168,9 @@ class AnalysisScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surface(context),
         borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: AppTheme.border(context)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,7 +218,7 @@ class AnalysisScreen extends StatelessWidget {
                     const SizedBox(height: 4),
                     MonoNumbersText(
                       'صحيح ${arabicInt(item.correct)} من ${arabicInt(item.total)}',
-                      style: const TextStyle(color: Colors.black54),
+                      style: TextStyle(color: AppTheme.mutedText(context)),
                     ),
                   ],
                 ),
@@ -252,11 +258,13 @@ class AnalysisScreen extends StatelessWidget {
     );
   }
 
-  static const TextStyle _statStyle = TextStyle(
-    color: Color(0xFF2E434C),
-    fontWeight: FontWeight.w700,
-    fontSize: 17,
-  );
+  TextStyle _statStyle(BuildContext context) {
+    return TextStyle(
+      color: Theme.of(context).colorScheme.onSurface,
+      fontWeight: FontWeight.w700,
+      fontSize: 17,
+    );
+  }
 }
 
 class _RuleStat {

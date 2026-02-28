@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../data/tajweed_content.dart';
+import '../theme/app_theme.dart';
 import '../utils/arabic_numbers.dart';
 import '../widgets/fade_slide_in.dart';
 import '../widgets/mono_numbers_text.dart';
@@ -29,8 +30,8 @@ class LessonsScreen extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 14),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(28),
-              color: Colors.white,
-              border: Border.all(color: const Color(0xFFE3EBEF)),
+              color: AppTheme.surface(context),
+              border: Border.all(color: AppTheme.border(context)),
               boxShadow: [
                 BoxShadow(
                   color: accent.withValues(alpha: 0.08),
@@ -95,7 +96,7 @@ class LessonsScreen extends StatelessWidget {
                       Text(
                         section.overview,
                         style: TextStyle(
-                          color: Color(0xFF2D424A),
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -105,16 +106,16 @@ class LessonsScreen extends StatelessWidget {
                         width: double.infinity,
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF4F8FA),
+                          color: AppTheme.surfaceAlt(context),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: const Color(0xFFE2EBF0)),
+                          border: Border.all(color: AppTheme.border(context)),
                         ),
                         child: Text(
                           section.poemExcerpt,
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: Color(0xFF3B5058),
+                            color: AppTheme.mutedText(context),
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                           ),

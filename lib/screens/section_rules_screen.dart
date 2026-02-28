@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/tajweed_content.dart';
 import '../models/tajweed_models.dart';
+import '../theme/app_theme.dart';
 import 'rule_details_screen.dart';
 
 class SectionRulesScreen extends StatelessWidget {
@@ -21,8 +22,9 @@ class SectionRulesScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppTheme.surface(context),
                 borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppTheme.border(context)),
               ),
               child: Text(
                 section.poemExcerpt,
@@ -60,9 +62,13 @@ class _RuleCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surface(context),
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: rule.color.withValues(alpha: 0.28)),
+        border: Border.all(
+          color: AppTheme.isDark(context)
+              ? AppTheme.border(context)
+              : rule.color.withValues(alpha: 0.28),
+        ),
       ),
       child: Material(
         color: Colors.transparent,
@@ -116,7 +122,7 @@ class _RuleCard extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF6F9FB),
+                      color: AppTheme.surfaceAlt(context),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: rule.color.withValues(alpha: 0.2),

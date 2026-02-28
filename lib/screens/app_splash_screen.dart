@@ -31,20 +31,23 @@ class _AppSplashScreenState extends State<AppSplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       body: DecoratedBox(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFFF5F7FA), Color(0xFFEAF1F4)],
+            colors: isDark
+                ? const [Color(0xFF0F171A), Color(0xFF132027)]
+                : const [Color(0xFFF5F7FA), Color(0xFFEAF1F4)],
           ),
         ),
         child: Stack(
           children: [
-            const Positioned.fill(child: _SplashBackdrop()),
+            Positioned.fill(child: _SplashBackdrop(isDark: isDark)),
             SafeArea(
               child: Stack(
                 children: [
@@ -74,9 +77,13 @@ class _AppSplashScreenState extends State<AppSplashScreen>
                                       width: 180,
                                       height: 180,
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withValues(
-                                          alpha: 0.88,
-                                        ),
+                                        color: isDark
+                                            ? const Color(
+                                                0xFF223139,
+                                              ).withValues(alpha: 0.95)
+                                            : Colors.white.withValues(
+                                                alpha: 0.88,
+                                              ),
                                         shape: BoxShape.circle,
                                         boxShadow: [
                                           BoxShadow(
@@ -117,7 +124,9 @@ class _AppSplashScreenState extends State<AppSplashScreen>
                         Text(
                           'تجويد',
                           style: textTheme.headlineMedium?.copyWith(
-                            color: const Color(0xFF1B4A53),
+                            color: isDark
+                                ? const Color(0xFFE9F3F6)
+                                : const Color(0xFF1B4A53),
                             fontWeight: FontWeight.w800,
                           ),
                         ),
@@ -125,7 +134,9 @@ class _AppSplashScreenState extends State<AppSplashScreen>
                         Text(
                           'تحفة الأطفال',
                           style: textTheme.titleMedium?.copyWith(
-                            color: const Color(0xFF245C66),
+                            color: isDark
+                                ? const Color(0xFF89BAC4)
+                                : const Color(0xFF245C66),
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -133,7 +144,9 @@ class _AppSplashScreenState extends State<AppSplashScreen>
                         Text(
                           'جاري تجهيز التمارين...',
                           style: textTheme.bodyMedium?.copyWith(
-                            color: const Color(0xFF48646D),
+                            color: isDark
+                                ? const Color(0xFFABC0C8)
+                                : const Color(0xFF48646D),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -160,7 +173,9 @@ class _AppSplashScreenState extends State<AppSplashScreen>
 }
 
 class _SplashBackdrop extends StatelessWidget {
-  const _SplashBackdrop();
+  const _SplashBackdrop({required this.isDark});
+
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
@@ -174,7 +189,9 @@ class _SplashBackdrop extends StatelessWidget {
             height: 230,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: const Color(0xFF245C66).withValues(alpha: 0.10),
+              color: const Color(
+                0xFF245C66,
+              ).withValues(alpha: isDark ? 0.2 : 0.1),
             ),
           ),
         ),
@@ -186,7 +203,9 @@ class _SplashBackdrop extends StatelessWidget {
             height: 170,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: const Color(0xFF4D9B8A).withValues(alpha: 0.11),
+              color: const Color(
+                0xFF4D9B8A,
+              ).withValues(alpha: isDark ? 0.2 : 0.11),
             ),
           ),
         ),
@@ -206,8 +225,12 @@ class _SplashBackdrop extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.white.withValues(alpha: 0.42),
-                  Colors.white.withValues(alpha: 0.10),
+                  (isDark ? const Color(0xFF2E4148) : Colors.white).withValues(
+                    alpha: isDark ? 0.4 : 0.42,
+                  ),
+                  (isDark ? const Color(0xFF2E4148) : Colors.white).withValues(
+                    alpha: isDark ? 0.16 : 0.1,
+                  ),
                 ],
               ),
             ),
@@ -319,6 +342,7 @@ class _PublisherFooterMark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final textTheme = Theme.of(context).textTheme;
 
     return Row(
@@ -328,7 +352,7 @@ class _PublisherFooterMark extends StatelessWidget {
         Text(
           '# Developed by Vearth',
           style: textTheme.labelMedium?.copyWith(
-            color: const Color(0xFF5F7177),
+            color: isDark ? const Color(0xFF94AAB2) : const Color(0xFF5F7177),
             fontWeight: FontWeight.w400,
             fontSize: 13,
             letterSpacing: 0,

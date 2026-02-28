@@ -67,7 +67,7 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF3F7FA),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           title: Text(widget.config.practiceType.label),
           actions: [
@@ -212,9 +212,9 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surface(context),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.primary.withValues(alpha: 0.1)),
+        border: Border.all(color: AppTheme.border(context)),
       ),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -245,7 +245,7 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
                           ? AppTheme.primary
                           : (isAnswered
                                 ? AppTheme.accent.withValues(alpha: 0.18)
-                                : const Color(0xFFF1F5F8)),
+                                : AppTheme.surfaceAlt(context)),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isCurrent
@@ -259,7 +259,7 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
                         style: TextStyle(
                           color: isCurrent
                               ? Colors.white
-                              : const Color(0xFF29515C),
+                              : Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w800,
                           fontSize: 13,
                         ),
@@ -281,7 +281,7 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: Colors.white,
+        color: AppTheme.surface(context),
         border: Border.all(color: AppTheme.primary.withValues(alpha: 0.12)),
       ),
       child: Column(
@@ -304,10 +304,10 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
           const SizedBox(height: 8),
           Text(
             question.prompt,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.w800,
-              color: Color(0xFF18343D),
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ],
@@ -334,7 +334,7 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
           decoration: BoxDecoration(
             color: isSelected
                 ? AppTheme.primary.withValues(alpha: 0.12)
-                : Colors.white,
+                : AppTheme.surface(context),
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
               color: isSelected
@@ -351,7 +351,7 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
                 decoration: BoxDecoration(
                   color: isSelected
                       ? AppTheme.primary
-                      : const Color(0xFFEFF4F8),
+                      : AppTheme.surfaceAlt(context),
                   borderRadius: BorderRadius.circular(11),
                 ),
                 child: Center(
@@ -360,7 +360,7 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
                     style: TextStyle(
                       color: isSelected
                           ? Colors.white
-                          : const Color(0xFF2F5660),
+                          : Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -373,13 +373,15 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
                   style: TextStyle(
                     fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                     fontSize: 18,
-                    color: const Color(0xFF1D3740),
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),
               Icon(
                 isSelected ? Icons.check_circle_rounded : Icons.circle_outlined,
-                color: isSelected ? AppTheme.primary : const Color(0xFF8CA1A9),
+                color: isSelected
+                    ? AppTheme.primary
+                    : AppTheme.mutedText(context),
               ),
             ],
           ),
@@ -392,9 +394,9 @@ class _PracticeSessionScreenState extends State<PracticeSessionScreen> {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surface(context),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppTheme.primary.withValues(alpha: 0.1)),
+        border: Border.all(color: AppTheme.border(context)),
       ),
       child: Row(
         children: [

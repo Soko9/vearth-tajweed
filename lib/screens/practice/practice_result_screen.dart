@@ -94,8 +94,9 @@ class PracticeResultScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppTheme.surface(context),
                   borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: AppTheme.border(context)),
                 ),
                 child: const Text('ممتاز! لا توجد أخطاء في هذه المحاولة.'),
               )
@@ -105,10 +106,12 @@ class PracticeResultScreen extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: 10),
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppTheme.surface(context),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: Colors.red.withValues(alpha: 0.16),
+                      color: AppTheme.isDark(context)
+                          ? AppTheme.border(context)
+                          : Colors.red.withValues(alpha: 0.16),
                     ),
                   ),
                   child: Column(

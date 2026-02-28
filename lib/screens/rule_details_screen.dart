@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/tajweed_models.dart';
+import '../theme/app_theme.dart';
 import '../utils/arabic_numbers.dart';
 
 class RuleDetailsScreen extends StatelessWidget {
@@ -62,7 +63,8 @@ class RuleDetailsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            _whiteCard(
+            _surfaceCard(
+              context: context,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -76,7 +78,8 @@ class RuleDetailsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            _whiteCard(
+            _surfaceCard(
+              context: context,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -110,7 +113,8 @@ class RuleDetailsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            _whiteCard(
+            _surfaceCard(
+              context: context,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -151,7 +155,8 @@ class RuleDetailsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            _whiteCard(
+            _surfaceCard(
+              context: context,
               child: Row(
                 children: [
                   const Icon(Icons.lightbulb_rounded),
@@ -166,12 +171,13 @@ class RuleDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _whiteCard({required Widget child}) {
+  Widget _surfaceCard({required BuildContext context, required Widget child}) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.surface(context),
         borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: AppTheme.border(context)),
       ),
       child: child,
     );
