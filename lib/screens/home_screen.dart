@@ -15,11 +15,15 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({
     required this.attempts,
     required this.onAttemptSaved,
+    required this.themeMode,
+    required this.onToggleThemeMode,
     super.key,
   });
 
   final List<PracticeAttempt> attempts;
   final Future<void> Function(PracticeAttempt attempt) onAttemptSaved;
+  final ThemeMode themeMode;
+  final VoidCallback onToggleThemeMode;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -67,6 +71,17 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           title: Text(_titleForIndex(_selectedIndex)),
           actions: [
+            IconButton(
+              tooltip: widget.themeMode == ThemeMode.dark
+                  ? 'تفعيل الوضع الفاتح'
+                  : 'تفعيل الوضع الداكن',
+              onPressed: widget.onToggleThemeMode,
+              icon: Icon(
+                widget.themeMode == ThemeMode.dark
+                    ? Icons.light_mode_rounded
+                    : Icons.dark_mode_rounded,
+              ),
+            ),
             IconButton(
               tooltip: 'التحقق من التحديث',
               onPressed: _isCheckingUpdate

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -5,6 +7,7 @@ import 'models/practice_models.dart';
 import 'screens/app_splash_screen.dart';
 import 'screens/home_screen.dart';
 import 'services/practice_storage_service.dart';
+import 'services/theme_mode_storage_service.dart';
 import 'theme/app_theme.dart';
 
 class TajweedApp extends StatefulWidget {
@@ -16,29 +19,35 @@ class TajweedApp extends StatefulWidget {
 
 class _TajweedAppState extends State<TajweedApp> {
   final PracticeStorageService _storageService = PracticeStorageService();
+  final ThemeModeStorageService _themeModeStorageService =
+      ThemeModeStorageService();
   List<PracticeAttempt> _attempts = const [];
+  ThemeMode _themeMode = ThemeMode.light;
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadAttempts();
+    _loadInitialState();
   }
 
-  Future<void> _loadAttempts() async {
+  Future<void> _loadInitialState() async {
     final attemptsFuture = _storageService.loadAttempts();
+    final themeModeFuture = _themeModeStorageService.loadThemeMode();
     await Future<void>.delayed(const Duration(milliseconds: 850));
     if (!mounted) {
       return;
     }
 
     final attempts = await attemptsFuture;
+    final themeMode = await themeModeFuture;
     if (!mounted) {
       return;
     }
 
     setState(() {
       _attempts = attempts;
+      _themeMode = themeMode;
       _isLoading = false;
     });
   }
@@ -51,6 +60,16 @@ class _TajweedAppState extends State<TajweedApp> {
     setState(() {
       _attempts = [attempt, ..._attempts];
     });
+  }
+
+  void _toggleThemeMode() {
+    final nextMode = _themeMode == ThemeMode.dark
+        ? ThemeMode.light
+        : ThemeMode.dark;
+    setState(() {
+      _themeMode = nextMode;
+    });
+    unawaited(_themeModeStorageService.saveThemeMode(nextMode));
   }
 
   @override
@@ -67,10 +86,15 @@ class _TajweedAppState extends State<TajweedApp> {
       ],
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: _themeMode,
       home: _isLoading
           ? const AppSplashScreen()
-          : HomeScreen(attempts: _attempts, onAttemptSaved: _onAttemptSaved),
+          : HomeScreen(
+              attempts: _attempts,
+              onAttemptSaved: _onAttemptSaved,
+              themeMode: _themeMode,
+              onToggleThemeMode: _toggleThemeMode,
+            ),
     );
   }
 }
