@@ -1,0 +1,5 @@
+Version 1.0.4
+
+- Fixed in-app update checking for release builds by enabling internet permission in AndroidManifest
+- Improved GitHub update API reliability with explicit User-Agent header
+- Updated website download button to point to v1.0.4 arm64 APK

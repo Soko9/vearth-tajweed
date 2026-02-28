@@ -42,6 +42,10 @@ class UpdateCheckerService {
         HttpHeaders.acceptHeader,
         'application/vnd.github+json',
       );
+      request.headers.set(
+        HttpHeaders.userAgentHeader,
+        'TajweedAppUpdateChecker/1.0 (+https://github.com/$owner/$repo)',
+      );
 
       final response = await request.close();
       if (response.statusCode < 200 || response.statusCode >= 300) {

@@ -56,19 +56,18 @@ It combines:
   - Recent attempts history.
 - Local persistence of attempts using `SharedPreferences`.
 
-## Recent Changes (v1.0.3)
+## Recent Changes (v1.0.4)
 
 ### Added
 
-- Full dark theme support across the app (`ThemeMode.system`).
-- Dark-mode styling for the landing PWA (`web/index.html` via `prefers-color-scheme`).
-- New Android release artifacts and checksums for `v1.0.3`.
+- Release-build internet permission required for in-app update checks.
+- Explicit `User-Agent` for GitHub Releases API update requests.
+- New Android release artifacts and checksums for `v1.0.4`.
 
 ### Changed
 
-- Core lesson, practice, analysis, and splash surfaces updated to be theme-aware.
-- Website Android download link updated to the `v1.0.3` arm64 APK.
-- App version bumped to `1.0.3+4`.
+- Website Android download link updated to the `v1.0.4` arm64 APK.
+- App version bumped to `1.0.4+5`.
 
 ### Removed
 
@@ -126,6 +125,8 @@ release/
   v1.0.1-apk/
   v1.0.3/
   v1.0.3-apk/
+  v1.0.4/
+  v1.0.4-apk/
 ```
 
 ## Getting Started
@@ -191,18 +192,18 @@ It deploys `web/` automatically on pushes to `main` or `master` (or manual run).
 
 ## Release Artifacts
 
-Current published release: **v1.0.3**
+Current published release: **v1.0.4**
 
 - GitHub release page:
-  - `https://github.com/Soko9/vearth-tajweed/releases/tag/v1.0.3`
+  - `https://github.com/Soko9/vearth-tajweed/releases/tag/v1.0.4`
 - AAB + hash:
-  - `release/v1.0.3/tajweed-v1.0.3.aab`
-  - `release/v1.0.3/tajweed-v1.0.3.aab.sha256`
+  - `release/v1.0.4/tajweed-v1.0.4.aab`
+  - `release/v1.0.4/tajweed-v1.0.4.aab.sha256`
 - APK set + checksums:
-  - `release/v1.0.3-apk/tajweed-v1.0.3-arm64-v8a.apk`
-  - `release/v1.0.3-apk/tajweed-v1.0.3-armeabi-v7a.apk`
-  - `release/v1.0.3-apk/tajweed-v1.0.3-x86_64.apk`
-  - `release/v1.0.3-apk/SHA256SUMS.txt`
+  - `release/v1.0.4-apk/tajweed-v1.0.4-arm64-v8a.apk`
+  - `release/v1.0.4-apk/tajweed-v1.0.4-armeabi-v7a.apk`
+  - `release/v1.0.4-apk/tajweed-v1.0.4-x86_64.apk`
+  - `release/v1.0.4-apk/SHA256SUMS.txt`
 
 ## Privacy and Data
 
