@@ -12,19 +12,23 @@
 
 ## Overview
 
-**Tajweed** is an educational mobile app focused on rules from **Tuhfat Al-Atfal**.
+**Tajweed** is an educational app focused on rules from **Tuhfat Al-Atfal**.
 It combines:
 
 - Lesson browsing by section and rule.
 - Rule details with examples and verses from the poem.
-- Interactive practice sessions.
+- Interactive practice sessions with multiple modes.
 - Performance analysis from saved attempts.
-- Optional online question source via Firestore, with offline fallback.
+- Android update checks from GitHub Releases.
+- A public `web/` PWA landing page for downloads and screenshots.
 
 ## Current Feature Set
 
-- Arabic RTL interface with Arabic numerals and readable typography.
-- 6 lesson sections and 27 Tajweed rules currently included in local content.
+- Arabic RTL interface with Arabic numerals and Beiruti typography.
+- System-aware theming:
+  - Light theme.
+  - Dark theme.
+- 6 lesson sections and 27 Tajweed rules in local content.
 - Rule details include:
   - Definition.
   - Relevant letters.
@@ -36,6 +40,7 @@ It combines:
   - True / False (`trueFalse`).
   - Letter Match (`letterMatch`).
   - Section Match (`sectionMatch`).
+  - Definition Match (`definitionMatch`).
 - Practice scope control:
   - All rules.
   - Specific section.
@@ -50,16 +55,35 @@ It combines:
   - Strongest rules.
   - Recent attempts history.
 - Local persistence of attempts using `SharedPreferences`.
-- Optional Firestore question loading with automatic fallback to offline generation.
+
+## Recent Changes (v1.0.3)
+
+### Added
+
+- Full dark theme support across the app (`ThemeMode.system`).
+- Dark-mode styling for the landing PWA (`web/index.html` via `prefers-color-scheme`).
+- New Android release artifacts and checksums for `v1.0.3`.
+
+### Changed
+
+- Core lesson, practice, analysis, and splash surfaces updated to be theme-aware.
+- Website Android download link updated to the `v1.0.3` arm64 APK.
+- App version bumped to `1.0.3+4`.
+
+### Removed
+
+- Outdated README references to Firebase/Firestore online question source.
+- Outdated README references to non-existent Firebase service files and dependencies.
 
 ## Tech Stack
 
 - Flutter
 - Dart (`^3.10.7`)
-- `shared_preferences`
-- `firebase_core` (optional runtime integration)
-- `cloud_firestore` (optional online question source)
 - `google_fonts`
+- `shared_preferences`
+- `package_info_plus`
+- `url_launcher`
+- `flutter_svg`
 
 ## Project Structure
 
@@ -73,18 +97,35 @@ lib/
     practice_models.dart
     tajweed_models.dart
   screens/
+    app_splash_screen.dart
+    home_screen.dart
     lessons_screen.dart
     section_rules_screen.dart
     rule_details_screen.dart
+    analysis_screen.dart
     practice/
       practice_setup_screen.dart
       practice_session_screen.dart
       practice_result_screen.dart
-    analysis_screen.dart
   services/
     practice_engine_service.dart
-    firebase_practice_source_service.dart
     practice_storage_service.dart
+    update_checker_service.dart
+  theme/
+    app_theme.dart
+  widgets/
+    fade_slide_in.dart
+    mono_numbers_text.dart
+web/
+  index.html
+  manifest.json
+  sw.js
+  screenshots/
+release/
+  v1.0.1/
+  v1.0.1-apk/
+  v1.0.3/
+  v1.0.3-apk/
 ```
 
 ## Getting Started
@@ -107,88 +148,70 @@ flutter run
 dart analyze
 ```
 
+## App Update Check (Android)
+
+- Implemented in `lib/services/update_checker_service.dart`.
+- Checks latest GitHub Release from:
+  - owner: `Soko9`
+  - repo: `vearth-tajweed`
+- Behavior:
+  - Android only.
+  - Prefers `arm64-v8a` APK asset if available.
+  - Falls back to any APK asset or release page URL.
+
 ## Landing PWA (Download Page)
 
-The `web/` folder is configured as a **simple PWA landing page** (not the Flutter app UI) to publish your app globally with:
+The `web/` folder is configured as a **static PWA landing page** (not Flutter web UI) to publish app information globally with:
 
 - App overview and features.
 - Screenshot section.
 - Android/iOS download buttons.
 - Installable website behavior (PWA).
+- Auto dark-mode styling (`prefers-color-scheme`).
 
 ### Configure Download Links
 
 Edit these links in `web/index.html`:
 
-- Android button (`id="android-link"`)
-- iOS button (`id="ios-link"`)
+- Android button (`id="android-link"`).
+- iOS button (`id="ios-link"`).
 
 Notes:
 
-- Android direct download can point to APK/AAB release URL (for example GitHub Releases).
-- iOS download must point to your App Store/TestFlight/public web install URL when available.
+- Android direct download can point to GitHub Release APK assets.
+- iOS button is currently placeholder (`#`) until an App Store/TestFlight URL is available.
 
-### Add Real Screenshots
-
-1. Put screenshots in `web/screenshots/`.
-2. Replace placeholder preview blocks in `web/index.html`.
-
-### Deploy to GitHub Pages (Free)
+### Deploy to GitHub Pages
 
 This repository includes:
 
 - `.github/workflows/deploy-pwa-pages.yml`
 
-It deploys the `web/` static site automatically on pushes to `main` or `master`.
+It deploys `web/` automatically on pushes to `main` or `master` (or manual run).
 
-1. Push repo to GitHub.
-2. In repository settings, open **Pages**.
-3. Select **GitHub Actions** as the source.
-4. Push to `main`/`master` or run the workflow manually.
-5. Your public URL becomes:
-   - `https://<username>.github.io/<repo>/`
-   - or `https://<username>.github.io/` for a user-site repo.
+## Release Artifacts
 
-## Optional Online Practice (Firestore)
+Current published release: **v1.0.3**
 
-Online mode is intentionally simple:
-
-- No authentication.
-- No user accounts.
-- Questions are managed manually in Firebase Console.
-- App reads from Firestore only when the user enables online source in practice setup.
-- If Firebase is unavailable or returns invalid/empty data, app falls back to offline questions automatically.
-
-### Firestore Collection
-
-Use collection: `practice_questions`
-
-### Document Schema
-
-| Field | Type | Required | Notes |
-|---|---|---|---|
-| `enabled` | `bool` | Yes | `true` means this document is active and can be used. |
-| `practiceType` | `string` | Yes | One of: `mcq`, `trueFalse`, `letterMatch`, `sectionMatch`. |
-| `ruleId` | `string` | Yes | Must match a local rule id from `lib/data/tajweed_content.dart`. |
-| `prompt` | `string` | Yes | Question text shown to the user. |
-| `options` | `array<string>` | Yes | At least 2 options. |
-| `correctOptionIndex` | `int` | Yes | Zero-based index inside `options`. |
-| `explanation` | `string` | No | Extra explanation shown in results. |
-
-### What `ruleId` Means
-
-`ruleId` links an online question to a specific local Tajweed rule. This is required so:
-
-- Rule-level analysis stays accurate.
-- Scope filters (all/section/rule) still work.
-- Online and offline results can be merged consistently.
+- GitHub release page:
+  - `https://github.com/Soko9/vearth-tajweed/releases/tag/v1.0.3`
+- AAB + hash:
+  - `release/v1.0.3/tajweed-v1.0.3.aab`
+  - `release/v1.0.3/tajweed-v1.0.3.aab.sha256`
+- APK set + checksums:
+  - `release/v1.0.3-apk/tajweed-v1.0.3-arm64-v8a.apk`
+  - `release/v1.0.3-apk/tajweed-v1.0.3-armeabi-v7a.apk`
+  - `release/v1.0.3-apk/tajweed-v1.0.3-x86_64.apk`
+  - `release/v1.0.3-apk/SHA256SUMS.txt`
 
 ## Privacy and Data
 
 - No account system.
 - No personal profile data.
 - Practice history is stored locally on-device.
-- Network access is only relevant when online practice source is enabled.
+- Network is used for:
+  - Android update checks (GitHub Releases API).
+  - PWA hosting/download links.
 
 ## Branding Assets
 
@@ -202,16 +225,6 @@ Regenerate when assets/config change:
 dart run flutter_native_splash:create
 dart run flutter_launcher_icons
 ```
-
-## Release Notes for Publishing
-
-Before publishing to GitHub Releases and F-Droid, review these items:
-
-- Replace placeholder Android application id in `android/app/build.gradle.kts` (`com.example.tajweed`) with your final id.
-- Configure proper release signing (current release config still uses debug signing).
-- Verify copyright holder/year in `LICENSE` if needed for your release.
-- Prepare store metadata (description, screenshots, changelog, privacy notes).
-- If shipping Firebase online mode, document that external network service in your metadata.
 
 ## Contributing
 
