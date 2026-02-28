@@ -25,9 +25,10 @@ It combines:
 ## Current Feature Set
 
 - Arabic RTL interface with Arabic numerals and Beiruti typography.
-- System-aware theming:
-  - Light theme.
-  - Dark theme.
+- Manual theme control:
+  - Light theme toggle.
+  - Dark theme toggle.
+  - Persisted preference across app restarts.
 - 6 lesson sections and 27 Tajweed rules in local content.
 - Rule details include:
   - Definition.
@@ -56,18 +57,18 @@ It combines:
   - Recent attempts history.
 - Local persistence of attempts using `SharedPreferences`.
 
-## Recent Changes (v1.0.4)
+## Recent Changes (v1.0.5)
 
 ### Added
 
-- Release-build internet permission required for in-app update checks.
-- Explicit `User-Agent` for GitHub Releases API update requests.
-- New Android release artifacts and checksums for `v1.0.4`.
+- In-app theme toggle button (light/dark) in app bar.
+- Persisted theme mode using `SharedPreferences`.
+- New Android release artifacts and checksums for `v1.0.5`.
 
 ### Changed
 
-- Website Android download link updated to the `v1.0.4` arm64 APK.
-- App version bumped to `1.0.4+5`.
+- Website Android download link updated to the `v1.0.5` arm64 APK.
+- App version bumped to `1.0.5+6`.
 
 ### Removed
 
@@ -109,6 +110,7 @@ lib/
   services/
     practice_engine_service.dart
     practice_storage_service.dart
+    theme_mode_storage_service.dart
     update_checker_service.dart
   theme/
     app_theme.dart
@@ -127,6 +129,8 @@ release/
   v1.0.3-apk/
   v1.0.4/
   v1.0.4-apk/
+  v1.0.5/
+  v1.0.5-apk/
 ```
 
 ## Getting Started
@@ -192,18 +196,18 @@ It deploys `web/` automatically on pushes to `main` or `master` (or manual run).
 
 ## Release Artifacts
 
-Current published release: **v1.0.4**
+Current published release: **v1.0.5**
 
 - GitHub release page:
-  - `https://github.com/Soko9/vearth-tajweed/releases/tag/v1.0.4`
+  - `https://github.com/Soko9/vearth-tajweed/releases/tag/v1.0.5`
 - AAB + hash:
-  - `release/v1.0.4/tajweed-v1.0.4.aab`
-  - `release/v1.0.4/tajweed-v1.0.4.aab.sha256`
+  - `release/v1.0.5/tajweed-v1.0.5.aab`
+  - `release/v1.0.5/tajweed-v1.0.5.aab.sha256`
 - APK set + checksums:
-  - `release/v1.0.4-apk/tajweed-v1.0.4-arm64-v8a.apk`
-  - `release/v1.0.4-apk/tajweed-v1.0.4-armeabi-v7a.apk`
-  - `release/v1.0.4-apk/tajweed-v1.0.4-x86_64.apk`
-  - `release/v1.0.4-apk/SHA256SUMS.txt`
+  - `release/v1.0.5-apk/tajweed-v1.0.5-arm64-v8a.apk`
+  - `release/v1.0.5-apk/tajweed-v1.0.5-armeabi-v7a.apk`
+  - `release/v1.0.5-apk/tajweed-v1.0.5-x86_64.apk`
+  - `release/v1.0.5-apk/SHA256SUMS.txt`
 
 ## Privacy and Data
 
